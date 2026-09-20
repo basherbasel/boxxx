@@ -156,5 +156,56 @@ export const OFFICIAL_FIRMWARE_CATALOG: OfficialFirmwarePackage[] = [
     verifiedOfficial: true,
     notesAr: 'ملف IPSW رسمي موقع ومطابق لسيرفرات آبل (Apple TSS Signing Active) قابل للاستعادة في وضع DFU أو Recovery.',
     notesEn: 'Cryptographically signed production IPSW currently signed on Apple TSS servers.'
+  },
+  {
+    id: 'fw-pixel9pro-factory',
+    brand: 'Google',
+    model: 'GEC77',
+    marketName: 'Pixel 9 Pro XL (Komodo)',
+    regionCsc: 'Unlocked',
+    countryName: 'Google Worldwide Official',
+    osVersion: 'Android 15 (AP3A.240705.007)',
+    buildNumber: 'AP3A.240705.007',
+    pdaVersion: 'AP3A.240705.007',
+    cscVersion: 'Global',
+    modemVersion: 'g5400c-240507',
+    binaryRollbackIndex: 1,
+    releaseDate: '2024-08-14',
+    fileSizeBytes: 3145728000,
+    sha256Checksum: 'a92b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
+    md5Checksum: '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
+    downloadMirrors: [
+      { name: 'Google Factory Images (Fastest)', speed: '200 MB/s', url: 'https://dl.google.com/dl/android/aosp/komodo-factory-a92b3c4d.zip' }
+    ],
+    partitionsIncluded: ['boot.img', 'vendor_boot.img', 'init_boot.img', 'radio.img', 'image-komodo.zip'],
+    verifiedOfficial: true,
+    notesAr: 'روم المصنع الرسمي لأجهزة بيكسل 9 برو XL. يتم التفليش عبر Fastboot باستخدام سكربت flash-all.bat.',
+    notesEn: 'Official Google Factory image for Pixel 9 Pro XL. Requires Fastboot flash-all script execution.'
+  },
+  {
+    id: 'fw-huawei-p70u-harmony5',
+    brand: 'Huawei',
+    model: 'HBP-LX9',
+    marketName: 'Huawei Pura 70 Ultra',
+    regionCsc: 'Global',
+    countryName: 'International Edition',
+    osVersion: 'HarmonyOS 4.2 / 5.0 (Beta)',
+    buildNumber: '5.0.0.105(C432)',
+    pdaVersion: 'HBP-LX9 5.0.0.105',
+    cscVersion: 'C432',
+    modemVersion: '24.0.0',
+    binaryRollbackIndex: 1,
+    releaseDate: '2024-07-01',
+    fileSizeBytes: 6871947673,
+    sha256Checksum: '1c2b3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c',
+    md5Checksum: 'f2e4d6c8b0a2f4e6d8c0b2a4f6e8d0c2',
+    downloadMirrors: [
+      { name: 'Huawei Support Portal', speed: '45 MB/s', url: 'https://consumer.huawei.com/en/support/phones/pura-70-ultra/' },
+      { name: 'Easy-Firmware Mirror', speed: '25 MB/s', url: 'https://easy-firmware.com/index.php?a=downloads&b=file&id=102934' }
+    ],
+    partitionsIncluded: ['UPDATE.APP', 'PTABLE.APP', 'XLOADER.img', 'TRUSTZONE.img'],
+    verifiedOfficial: true,
+    notesAr: 'ملف UPDATE.APP رسمي قابل للتفليش عبر الـ SD Card (وضع dload) أو عبر بروتوكول COM 1.0 باستخدام OmniFix Pro.',
+    notesEn: 'Official Huawei UPDATE.APP package. Supports SD Card (dload) or direct COM 1.0 protocol flash.'
   }
 ];

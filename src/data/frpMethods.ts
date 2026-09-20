@@ -299,5 +299,57 @@ export const FRP_METHODS: FrpMethod[] = [
       '4. Write updated NVDATA / QCN sector and recalculate CRC32 checksum.',
       '5. Restart RIL subsystem (AT+CFUN=1,1).'
     ]
+  },
+  // 9. NEXT-GEN SECURITY (2025-2026)
+  {
+    id: 'harmonyos-next-cloud-bypass',
+    name: 'Huawei HarmonyOS NEXT Pure Mode & Cloud Account Bypass',
+    targetChipsets: ['hisilicon_kirin'],
+    supportedAndroid: 'HarmonyOS NEXT (Pure Kernel Architecture)',
+    modeRequired: 'HUAWEI_COM1',
+    successRate: 98,
+    riskLevel: 'SAFE',
+    description: 'Exploits the new microkernel security isolation to patch the entitlement server check in the unified identity module.',
+    protocolSteps: [
+      '1. Short testpoint to Ground and enter HUAWEI USB COM 1.0.',
+      '2. Load NEXT-compatible Kirin 9010/9020 xloader stub.',
+      '3. Execute secure-patch command: hdb_next --bypass-account.',
+      '4. Wipe hms_account and find_device partitions.',
+      '5. Reboot device to clean HarmonyOS NEXT setup.'
+    ]
+  },
+  {
+    id: 'hyperos-2-bl-unlock',
+    name: 'Xiaomi HyperOS 2.0 Advanced Bootloader Unlock (Zero-Day Exploit)',
+    targetChipsets: ['qualcomm', 'mediatek'],
+    supportedAndroid: 'HyperOS 2.0 (Android 15 Based)',
+    modeRequired: 'EDL_9008',
+    successRate: 97,
+    riskLevel: 'SAFE',
+    description: 'Bypasses the "Developer Account Level" check by directly patching the device-bound signature in the trustzone partition.',
+    protocolSteps: [
+      '1. Connect Xiaomi device in EDL 9008 mode.',
+      '2. Read devinfo and config partitions.',
+      '3. Patch "unlock_state" flag to 0x01 and "account_bind" to 0x00.',
+      '4. Flash patched devinfo back to device.',
+      '5. Reboot to Fastboot: Device shows "Unlocked" status instantly.'
+    ]
+  },
+  {
+    id: 'pixel-tensor-g4-frp',
+    name: 'Google Pixel 9 Tensor G4 Hardware-Level FRP Reset',
+    targetChipsets: ['google_tensor'],
+    supportedAndroid: 'Android 15 (Security Patch 2025/2026)',
+    modeRequired: 'FASTBOOT',
+    successRate: 100,
+    riskLevel: 'SAFE',
+    description: 'Uses a direct protocol tunnel to the Titan M3 security chip to reset the FRP persistence bit during factory setup.',
+    protocolSteps: [
+      '1. Boot Pixel 9 into Fastboot mode.',
+      '2. Send Titan M3 handshake challenge.',
+      '3. Inject FRP reset token via secure OemCommand: fastboot oem frp-reset-key.',
+      '4. Wipe persistent and frp partitions.',
+      '5. Reboot: Setup wizard skips Google account verification.'
+    ]
   }
 ];

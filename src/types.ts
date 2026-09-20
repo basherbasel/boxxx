@@ -13,6 +13,7 @@ export type ChipsetType =
   | 'unisoc_spd' 
   | 'hisilicon_kirin' 
   | 'apple_ios' 
+  | 'google_tensor' 
   | 'generic_adb';
 
 export type DeviceMode = 
@@ -28,6 +29,7 @@ export type DeviceMode =
   | 'RECOVERY_SIDELOAD' 
   | 'APPLE_DFU' 
   | 'APPLE_RECOVERY' 
+  | 'ROOT' 
   | 'DISCONNECTED';
 
 export interface WebUsbDeviceInfo {
@@ -188,6 +190,57 @@ export interface GeneratedCodeSnippet {
   filename: string;
   description: string;
   code: string;
+}
+
+// ---------------- REPAIR MANAGEMENT & CRM TYPES ----------------
+
+export type TicketStatus = 'PENDING' | 'IN_PROGRESS' | 'AWAITING_PARTS' | 'COMPLETED' | 'DELIVERED' | 'CANCELLED';
+
+export interface ClientRecord {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  notes?: string;
+  totalSpent: number;
+  lastVisit: string;
+}
+
+export interface RepairTicket {
+  id: string;
+  clientId: string;
+  clientName: string;
+  deviceModel: string;
+  imei: string;
+  faultDescription: string;
+  estimatedCost: number;
+  deposit: number;
+  status: TicketStatus;
+  priority: 'NORMAL' | 'URGENT' | 'VIP';
+  createdAt: string;
+  updatedAt: string;
+  technicianName: string;
+  partsUsed: { partId: string; name: string; cost: number }[];
+  diagnosisReport?: FixAiDiagnosticResult;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  category: 'IC' | 'SCREEN' | 'FLEX' | 'BATTERY' | 'TOOL';
+  stock: number;
+  minStock: number;
+  cost: number;
+  price: number;
+  compatibility: string[];
+}
+
+export interface BusinessAnalytics {
+  totalRevenue: number;
+  totalProfit: number;
+  ticketsCompleted: number;
+  averageRepairTime: number;
+  topFaults: { fault: string; count: number }[];
 }
 
 // ---------------- CLOUD SECURITY & ZERO-DAY EXPLOIT TYPES ----------------

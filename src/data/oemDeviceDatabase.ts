@@ -1117,13 +1117,66 @@ export const OEM_DEVICE_DATABASE: OemDeviceRecord[] = [
   },
   {
     brand: "Google",
-    model: "Pixel 8 Pro",
-    code_name: "GC3VE (Husky)",
-    chipset: "Google Tensor G3",
+    model: "Pixel 7 Pro / 6 Pro / 5 / 4 XL / 3 XL / 2 XL / Pixel (Pixel series legacy)",
+    code_name: "Cheetah / Raven / Redfin / Coral / Crosshatch / Taimen / Sailfish",
+    chipset: "Google Tensor G2 / G1 / Snapdragon 765G / 855 / 845 / 835 / 821",
+    supported_operations: [
+      "FRP Bypass (Setup Wizard Exploit)",
+      "Fastboot Sideload OTA",
+      "Flash Factory Images (Slot A/B)",
+      "Read Info",
+      "Bootloader Unlock (Google Edition Only)"
+    ]
+  },
+  {
+    brand: "OnePlus",
+    model: "OnePlus 13 / 12 / 11 / 10 Pro / 9 Pro / 8 Pro / 7 Pro / 6T / 5T / 3T / One (OnePlus series)",
+    code_name: "CPH2581 / CPH2447 / NE2213 / LE2123 / IN2023 / GM1913 / A6013",
+    chipset: "Qualcomm Snapdragon 8 Gen 4 / Gen 3 / Gen 2 / 8 Gen 1 / 888 / 865 / 855 / 845",
     supported_operations: [
       "FRP Bypass",
+      "MSM Download Tool Recovery (EDL 9008)",
+      "FastbootD Flashing",
+      "OxygenOS / ColorOS Switch",
+      "Read Info",
+      "Bootloader Unlock Bypass"
+    ]
+  },
+  {
+    brand: "Sony",
+    model: "Xperia 1 VI / 1 V / 1 IV / 1 III / 1 II / 1 (Xperia 1 series)",
+    code_name: "XQ-EC54 / XQ-DQ54",
+    chipset: "Snapdragon 8 Gen 3 / Gen 2 / Gen 1",
+    supported_operations: [
+      "FRP Bypass",
+      "Emma Official Flash Tool Support",
       "Fastboot Flashing",
-      "Bootloader Unlock",
+      "Newflasher Custom Flash",
+      "Read Info"
+    ]
+  },
+  {
+    brand: "LG",
+    model: "LG V60 ThinQ / V50 / V40 / V30 / G8 / G7 / G6 (LG legacy flagship series)",
+    code_name: "LM-V600 / LM-V450",
+    chipset: "Snapdragon 865 / 855 / 845 / 835",
+    supported_operations: [
+      "FRP Bypass (Accessibility Exploit)",
+      "LGUP KDZ Flashing",
+      "9008 EDL Recovery (Cross-flash)",
+      "Network Unlock via Diag",
+      "Read Info"
+    ]
+  },
+  {
+    brand: "Asus",
+    model: "ROG Phone 9 / 8 / 7 / 6 / 5 / Zenfone 11 / 10 / 9 (Gaming & Zenfone series)",
+    code_name: "AI2401 / AI2201",
+    chipset: "Snapdragon 8 Gen 3 / Gen 2 / Gen 1",
+    supported_operations: [
+      "FRP Bypass",
+      "RAW Firmware Flashing",
+      "Fastboot Slot A/B Recovery",
       "Read Info"
     ]
   }

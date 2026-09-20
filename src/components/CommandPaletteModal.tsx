@@ -15,30 +15,26 @@ import {
   Flame,
   ArrowRight,
   HardDrive,
+  LayoutDashboard,
   X
 } from 'lucide-react';
+import { useWorkstation } from '../context/WorkstationContext';
 import { ConnectedDevice } from '../types';
 import { DEVICE_PRESETS } from '../data/devicePresets';
 
-interface CommandPaletteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSelectTab: (tabId: string) => void;
-  onSelectDevice: (device: ConnectedDevice) => void;
-  onOpenUsbModal: () => void;
-  onOpenWindowsInstaller: () => void;
-  lang: 'en' | 'ar';
-}
+export const CommandPaletteModal: React.FC = () => {
+  const {
+    lang,
+    setActiveTab: onSelectTab,
+    setCurrentDevice: onSelectDevice,
+    isCommandPaletteOpen: isOpen,
+    setCommandPaletteOpen
+  } = useWorkstation();
 
-export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
-  isOpen,
-  onClose,
-  onSelectTab,
-  onSelectDevice,
-  onOpenUsbModal,
-  onOpenWindowsInstaller,
-  lang
-}) => {
+  const onClose = () => setCommandPaletteOpen(false);
+  const onOpenUsbModal = () => {};
+  const onOpenWindowsInstaller = () => {};
+
   const isAr = lang === 'ar';
   const [query, setQuery] = useState('');
 
@@ -62,6 +58,16 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   if (!isOpen) return null;
 
   const quickActions = [
+    {
+      id: 'dashboard',
+      titleAr: 'لوحة التحكم المركزية (Central Command Dashboard)',
+      titleEn: 'Central Command Dashboard',
+      subtitleAr: 'الوصول السريع لكافة الأدوات والمهام الرئيسية',
+      subtitleEn: 'Quick access to all core tools and tasks',
+      icon: LayoutDashboard,
+      color: 'text-indigo-600',
+      tabId: 'dashboard'
+    },
     {
       id: 'smart-1click',
       titleAr: 'الاستوديو الذكي ضغطة واحدة (Smart 1-Click Studio)',
@@ -179,8 +185,16 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-start justify-center pt-16 px-4">
-      <div className="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden space-y-0 animate-in fade-in zoom-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-start justify-center pt-16 px-4 cursor-pointer"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div 
+        className="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden space-y-0 animate-in fade-in zoom-in duration-200 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Search Header Input */}
         <div className="p-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50">

@@ -1,0 +1,175 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useWorkstation } from '../../context/WorkstationContext';
+import { Navbar } from '../Navbar';
+import { NavigationRail } from './NavigationRail';
+import { ConnectedDeviceStatus } from './ConnectedDeviceStatus';
+import { Terminal, Activity, Zap, ShieldCheck, Search, Bell, Globe, Power, RefreshCw } from 'lucide-react';
+import { CommandPaletteModal } from '../CommandPaletteModal';
+
+export function WorkstationShell({ children }: { children: React.ReactNode }) {
+  const { 
+    lang, 
+    activeTab, 
+    setActiveTab,
+    currentDevice, 
+    isBusy, 
+    isCommandPaletteOpen, 
+    setCommandPaletteOpen,
+    setLang,
+    cloudStatus,
+    checkCloudUpdates,
+    terminalLogs 
+  } = useWorkstation();
+
+  const isAr = lang === 'ar';
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-hidden">
+      {/* Precision Top Bar */}
+      <header className="h-14 bg-slate-900/95 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 z-50 shrink-0 shadow-2xl shadow-black/20">
+        <div className="flex items-center gap-4">
+          <div 
+            onClick={() => setActiveTab('dashboard')}
+            className="flex items-center gap-3 group cursor-pointer"
+          >
+            <div className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/40 group-hover:scale-105 transition-transform duration-500">
+              <Zap size={20} fill="currentColor" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[12px] font-black text-white leading-none tracking-tighter uppercase">OMNIFIX PRO</span>
+              <span className="text-[9px] font-bold text-indigo-400/80 uppercase tracking-[0.3em] mt-0.5">Ultra v5.0</span>
+            </div>
+          </div>
+          
+          <div className="h-6 w-px bg-white/10 mx-2" />
+          
+          <button 
+            onClick={() => setCommandPaletteOpen(true)}
+            className="flex items-center gap-4 px-5 py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group w-72"
+          >
+            <Search size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex-1 text-left">
+              {isAr ? 'البحث الذكي (Ctrl + K)' : 'Global Search (Ctrl + K)'}
+            </span>
+            <div className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-slate-500">⌘K</div>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-8">
+             <div className="flex flex-col items-end">
+               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{isAr ? 'حالة السيرفر' : 'SERVER NODE'}</span>
+               <div className="flex items-center gap-2">
+                 <div className={`w-1.5 h-1.5 rounded-full ${cloudStatus === 'offline' ? 'bg-rose-500' : 'bg-emerald-500'} shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse`} />
+                 <span className={`text-[10px] font-mono font-bold ${cloudStatus === 'offline' ? 'text-rose-400' : 'text-emerald-400'}`}>
+                   {cloudStatus === 'syncing' ? 'SYNCING...' : cloudStatus === 'updated' ? 'VERSION_LATEST' : 'SYMMETRIC_LIVE'}
+                 </span>
+               </div>
+             </div>
+             
+             <div className="flex flex-col items-end">
+               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{isAr ? 'تحديث السحابة' : 'CLOUD SYNC'}</span>
+               <button 
+                onClick={checkCloudUpdates}
+                disabled={cloudStatus === 'syncing'}
+                className="flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 transition-colors"
+               >
+                 <RefreshCw size={12} className={cloudStatus === 'syncing' ? 'animate-spin' : ''} />
+                 <span className="text-[10px] font-mono font-bold uppercase">AUTO_SYNC: ON</span>
+               </button>
+             </div>
+          </div>
+          
+          <div className="h-10 w-px bg-white/10" />
+          
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
+              className="flex items-center gap-2.5 px-4 py-2 text-[11px] bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-slate-300 font-black transition-all group"
+            >
+              <Globe className="w-4 h-4 text-indigo-400 group-hover:rotate-12 transition-transform" />
+              <span className="hidden sm:inline uppercase tracking-widest">{lang === 'en' ? 'AR' : 'EN'}</span>
+            </button>
+
+            <AnimatePresence>
+              {isBusy && (
+                <motion.button
+                  initial={{ scale: 0, x: 20 }}
+                  animate={{ scale: 1, x: 0 }}
+                  exit={{ scale: 0, x: 20 }}
+                  className="flex items-center gap-2 px-4 py-2 text-[10px] font-black bg-rose-500 text-white rounded-xl shadow-lg shadow-rose-500/40 animate-pulse border border-white/10"
+                >
+                  <Power size={14} />
+                  <span className="hidden sm:inline uppercase tracking-widest">{isAr ? 'إيقاف' : 'KILL'}</span>
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="h-10 w-px bg-white/10" />
+          <ConnectedDeviceStatus device={currentDevice} isBusy={isBusy} lang={lang} />
+        </div>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Universal Navigation Rail */}
+        <NavigationRail />
+
+        {/* Main Workspace Canvas */}
+        <main className="flex-1 flex flex-col relative bg-slate-50 overflow-hidden">
+          {/* Active Tool Navigation & Breadcrumbs */}
+          <div className="bg-white border-b border-slate-200 shrink-0 shadow-sm z-30">
+             <Navbar />
+          </div>
+
+          {/* Scrolling Content Area */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar bg-slate-50/50">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="h-full"
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* HUD Status Bar (Bottom) */}
+          <footer className="h-10 bg-white border-t border-slate-200 flex items-center justify-between px-8 shrink-0 z-40 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)]">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3 group cursor-pointer">
+                <Terminal size={14} className="text-indigo-500" />
+                <span className="text-[10px] font-mono text-slate-500 font-bold tracking-tight group-hover:text-indigo-600 transition-colors">
+                  {terminalLogs[terminalLogs.length - 1]}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-10">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Activity size={12} className="text-emerald-500" />
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">ENGINE: OK</span>
+                </div>
+                <div className="h-3 w-px bg-slate-200" />
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">CPU: 4% | RAM: 1.2GB</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 px-3 py-1 bg-emerald-50 rounded-lg border border-emerald-100">
+                <ShieldCheck size={12} className="text-emerald-600" />
+                <span className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">SECURE_TUNNEL: ACTIVE</span>
+              </div>
+            </div>
+          </footer>
+        </main>
+      </div>
+
+      <CommandPaletteModal />
+    </div>
+  );
+}

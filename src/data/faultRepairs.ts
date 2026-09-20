@@ -528,7 +528,86 @@ export const FAULT_REPAIRS: FaultRepairItem[] = [
       }
     ]
   },
-
+  {
+    id: 'neural-core-bypass-2026',
+    titleAr: 'تخطي حماية النواة العصبية (iPhone 17 Neural Core Bypass)',
+    titleEn: 'iPhone 17 Pro Max Neural Core & SEP Bypass',
+    category: 'SECURITY',
+    severity: 'CRITICAL',
+    descriptionAr: 'تخطي حماية معالج الذكاء الاصطناعي (Neural Engine) وحماية الـ SEP لأجهزة آيفون 17 لفك أقفال المالك وتنشيط الأجهزة.',
+    descriptionEn: 'Advanced bypass for A19 Pro Neural Engine and Secure Enclave Processor (SEP) to handle iCloud & Activation locks.',
+    icon: 'Cpu',
+    supportedModes: ['APPLE_DFU', 'RECOVERY_SIDELOAD'],
+    supportedChipsets: ['apple_ios'],
+    riskAr: 'يتطلب خبرة عالية في التعامل مع أوضاع DFU',
+    riskEn: 'Expert-level DFU protocol manipulation',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'استغلال ثغرة الـ Bootrom عبر منفذ USB-C 4.0',
+        actionEn: 'Execute Bootrom exploit chain via USB-C 4.0/Thunderbolt',
+        protocolCode: 'USB_REQ_A19_PRO_EXPLOIT: 0x21 0x01 0x0000 0x0000'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'تعطيل تحقق الـ SEP ونظام التشغيل الآمن (RTOS)',
+        actionEn: 'Disable SEP verification and Secure RTOS signature checks',
+        protocolCode: 'PATCH_SEP_VERIFY -> 0x00 (BYPASS)'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'تخطي شاشة التنشيط وحذف ملف الـ Setup.app وهمياً',
+        actionEn: 'Simulate Setup.app completion and bypass Activation records',
+        commandPreview: 'ios_tool --bypass-activation --model A3400'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'تنشيط الخدمات السحابية وإعادة التشغيل للنظام الكامل',
+        actionEn: 'Restart SpringBoard and enable full cellular/iCloud services',
+        commandPreview: 'ios_tool --reboot'
+      }
+    ]
+  },
+  {
+    id: 'knox-v2026-unlink',
+    titleAr: 'فك ارتباط حماية Knox 2026 (Samsung S26 Cloud Unlink)',
+    titleEn: 'Galaxy S26 Ultra Knox Guard 2026 Permanent Unlink',
+    category: 'SECURITY',
+    severity: 'HIGH',
+    descriptionAr: 'إزالة دائمة لحماية Knox Guard v5.0 المعتمدة على السحابة لأجهزة سامسونج S26 وما بعدها.',
+    descriptionEn: 'Permanent cloud-side unlinking of Knox Guard v5.0 for S26 Ultra series using deep-level RPMB patch.',
+    icon: 'ShieldAlert',
+    supportedModes: ['EDL_9008', 'SAMSUNG_DOWNLOAD'],
+    supportedChipsets: ['qualcomm', 'samsung_exynos'],
+    riskAr: 'آمن تماماً ولا يغير السيريال',
+    riskEn: '100% safe, non-invasive serial retention',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'قراءة سجلات RPMB المشفرة وتحديد مفتاح الارتباط السحابي',
+        actionEn: 'Read RPMB secure storage keys and identify Cloud Unlink Token',
+        protocolCode: 'RX: 0x51 0x22 -> TOKEN_HASH: 0xAF...01'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'توليد شهادة فك ارتباط وهمية مصدق عليها برمجياً',
+        actionEn: 'Synthesize virtual unlink certificate with hardware-signed hash',
+        protocolCode: 'TX: 0x4B 0x01 [CERT_DATA...]'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'تصفير عدادات الحماية وإعادة ضبط مصنع شامل للـ Persistence',
+        actionEn: 'Factory reset persistence storage and zero-out KG counters',
+        commandPreview: 'samsung_tool --reset-kg-v5 --model SM-S948B'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'تخطي واجهة الإعداد وتفعيل النظام بدون طلب حساب سامسونج',
+        actionEn: 'Bypass setup wizard and enable OS without Samsung Account prompt',
+        commandPreview: 'samsung_tool --reboot'
+      }
+    ]
+  },
   // 5. DATA EXTRACTION
   {
     id: 'emergency-data-dump',
@@ -567,6 +646,166 @@ export const FAULT_REPAIRS: FaultRepairItem[] = [
         actionAr: 'تجهيز تقرير الاستخراج وحفظ كافة البيانات في مجلد مؤمن ومضغوط على الكمبيوتر',
         actionEn: 'Package extracted files into encrypted backup archive on PC',
         commandPreview: 'Extraction complete -> Saved to /OmniFix_Vault/Backup.tar'
+      }
+    ]
+  },
+  {
+    id: 'arb-rollback-bypass',
+    titleAr: 'تخطي حماية منع الرجوع للإصدار الأقدم (Anti-Rollback / ARB Bypass)',
+    titleEn: 'Anti-Rollback (ARB) Index Bypass & Downgrade',
+    category: 'BOOT',
+    severity: 'CRITICAL',
+    descriptionAr: 'تجاوز حماية الـ ARB التي تمنع تفليش إصدارات حماية قديمة (Downgrade) لتجنب موت الجهاز.',
+    descriptionEn: 'Bypasses eFuse-based Anti-Rollback mechanisms to allow safe firmware downgrades to previous security levels.',
+    icon: 'ShieldAlert',
+    supportedModes: ['EDL_9008', 'MTK_BROM', 'HUAWEI_COM1'],
+    supportedChipsets: ['qualcomm', 'mediatek', 'hisilicon_kirin'],
+    riskAr: 'عالي الخطورة - يتطلب مبرمج ذاكرة متطابق',
+    riskEn: 'High Risk - requires precise binary matching',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'قراءة قيمة الـ ARB الحالية من معالج الجهاز (SMC / Fuse Read)',
+        actionEn: 'Query current ARB index from hardware security module fuses',
+        commandPreview: 'fastboot getvar anti'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'تعديل سجلات الإقلاع (xbl, abl) لإخفاء قيمة الحماية عن المعالج',
+        actionEn: 'Patch secondary bootloader binaries to suppress ARB index check',
+        protocolCode: 'HEX_PATCH: find 0x41 0x52 0x42 replace 0x00 0x00 0x00'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'تفليش الروم القديم مع استثناء بارتشنات الحماية الحساسة',
+        actionEn: 'Flash target legacy firmware excluding anti-rollback partitions',
+        commandPreview: 'fastboot flash system system.img'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'إعادة التشغيل بنجاح على الإصدار الأقدم',
+        actionEn: 'Reboot to legacy OS version with ARB check neutralized',
+        commandPreview: 'fastboot reboot'
+      }
+    ]
+  },
+  {
+    id: 'felica-nfc-fix',
+    titleAr: 'إصلاح وتعريف شريحة NFC والـ FeliCa (NFC / FeliCa Region Switch)',
+    titleEn: 'NFC & FeliCa (Osaifu-Keitai) Region & HW Fix',
+    category: 'HARDWARE',
+    severity: 'MEDIUM',
+    descriptionAr: 'تفعيل خدمات الدفع الإلكتروني (NFC) وتغيير المنطقة لتفعيل الـ FeliCa للأجهزة الموجهة لليابان أو العكس.',
+    descriptionEn: 'Enables FeliCa (Japan) or standard NFC by patching SEC_CONFIG and regional calibration blobs.',
+    icon: 'Radio',
+    supportedModes: ['ADB_ONLINE', 'EDL_9008', 'ROOT'],
+    supportedChipsets: ['qualcomm', 'samsung_exynos', 'apple_ios'],
+    riskAr: 'آمن - يحافظ على الـ IMEI',
+    riskEn: 'Safe - preserves cellular identity',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'فحص معرف منطقة الـ NFC في بارتشن الـ EFS / NVRAM',
+        actionEn: 'Identify NFC controller SKU and regional SKU in EFS/NVRAM',
+        commandPreview: 'adb shell getprop ro.boot.hardware.sku'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'حقن ملفات المعايرة الإقليمية (NFC Firmware Blobs) المطلوبة',
+        actionEn: 'Write regional-specific NFC calibration and firmware images',
+        commandPreview: 'fastboot flash nfc nfc_region_jp.img'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'تفعيل محفظة Osaifu-Keitai وتجاوز قيود الـ Google Pay',
+        actionEn: 'Initialize FeliCa secure element and sync with system keystore',
+        commandPreview: 'adb shell setprop persist.vendor.nfc.config 1'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'إعادة التشغيل وتفعيل الدفع عبر الهاتف بنجاح',
+        actionEn: 'Reboot and verify NFC tap-to-pay functionality',
+        commandPreview: 'adb reboot'
+      }
+    ]
+  },
+  {
+    id: 'faceid-touchid-repair',
+    titleAr: 'إصلاح ومزامنة مستشعر البصمة والوجه (FaceID / TouchID Crypto Alignment)',
+    titleEn: 'Biometric Sensor Cryptographic Pairing & Fix',
+    category: 'SECURITY',
+    severity: 'HIGH',
+    descriptionAr: 'إعادة ربط مستشعر البصمة (Fingerprint) أو الـ FaceID برمجياً بعد الاستبدال أو فقدان البيانات المشفرة.',
+    descriptionEn: 'Re-aligns biometric sensor crypto-tokens with the Secure Enclave / TrustZone after hardware repair.',
+    icon: 'ShieldCheck',
+    supportedModes: ['ADB_ONLINE', 'APPLE_DFU', 'EDL_9008'],
+    supportedChipsets: ['apple_ios', 'qualcomm', 'samsung_exynos', 'mediatek'],
+    riskAr: 'يتطلب اتصالاً بسيرفرات التوثيق الرسمية في بعض الحالات',
+    riskEn: 'May require cloud-side validation for certain security chips',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'قراءة الرقم التسلسلي للمستشعر (Sensor Unique ID) ومطابقته مع الـ Logic Board',
+        actionEn: 'Query biometric hardware serial and verify matching in SEP/TZ keys',
+        commandPreview: 'adb shell cat /sys/class/fingerprint/fp_id'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'توليد طلب مزامنة جديد (Handshake Request) لشريحة الحماية',
+        actionEn: 'Generate new crypto-pairing request to Secure Enclave / TrustZone',
+        protocolCode: 'SEC_BIO_PAIR: 0xFD 0x01 [SERIAL_HASH]'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'حقن كود المزامنة (Alignment Token) في بارتشن الـ Persist / Secure Storage',
+        actionEn: 'Inject alignment blob to persistent secure storage',
+        commandPreview: 'fastboot flash persist persist_aligned.img'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'إعادة التشغيل واختبار استجابة المستشعر الحيوية',
+        actionEn: 'Reboot and perform biometric enrollment test',
+        commandPreview: 'fastboot reboot'
+      }
+    ]
+  },
+  {
+    id: 'ufs-partition-resize',
+    titleAr: 'تعديل مساحة البارتشنات وتوسيع الذاكرة (UFS Partition Resize & LUN Management)',
+    titleEn: 'UFS Partition Resizing & Storage LUN Expansion',
+    category: 'HARDWARE',
+    severity: 'CRITICAL',
+    descriptionAr: 'توسيع مساحة بارتشن الـ System أو الـ Userdata برمجياً عبر دمج المساحات الفارغة وإعادة تقسيم الـ LUNs.',
+    descriptionEn: 'Advanced resizing of dynamic super partitions and logical unit (LUN) reallocation for storage optimization.',
+    icon: 'Maximize2',
+    supportedModes: ['EDL_9008', 'MTK_BROM', 'FASTBOOTD'],
+    supportedChipsets: ['qualcomm', 'mediatek', 'samsung_exynos'],
+    riskAr: 'خطورة متوسطة - يتطلب مراجعة دقيقة لجدول التقسيم GPT',
+    riskEn: 'Medium Risk - requires precise GPT alignment',
+    protocolPipeline: [
+      {
+        stepNumber: 1,
+        actionAr: 'قراءة جدول التقسيم (GPT) وتحليل المساحات غير المخصصة (Unallocated Space)',
+        actionEn: 'Parse Master GPT and locate unmapped storage sectors',
+        commandPreview: 'fastboot getvar partition-size:userdata'
+      },
+      {
+        stepNumber: 2,
+        actionAr: 'تعديل ملف الـ Rawprogram الخاص بالـ EDL ليعكس المساحات الجديدة',
+        actionEn: 'Generate updated rawprogram.xml with expanded sector offsets',
+        protocolCode: 'XML_EDIT: <program size_in_kb="NEW_SIZE" ... />'
+      },
+      {
+        stepNumber: 3,
+        actionAr: 'كتابة جدول التقسيم الجديد (GPT Write) وإعادة تهيئة البارتشنات المتأثرة',
+        actionEn: 'Flash updated GPT and perform quick-format on target partitions',
+        commandPreview: 'qdl --storage ufs --program rawprogram_resized.xml'
+      },
+      {
+        stepNumber: 4,
+        actionAr: 'التحقق من المساحة الكلية داخل النظام وإعادة التشغيل',
+        actionEn: 'Verify total available storage in OS and trigger final reboot',
+        commandPreview: 'adb shell df -h /data'
       }
     ]
   }

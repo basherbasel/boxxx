@@ -73,6 +73,74 @@ export interface PcbBitmapModelData {
 
 const BITMAP_DATABASE: PcbBitmapModelData[] = [
   {
+    modelId: 'samsung-s26u',
+    modelName: 'Galaxy S26 Ultra 5G (SM-S948B)',
+    brand: 'Samsung',
+    boardRevision: 'MAIN_REV3.0_S8750',
+    faultCategories: [
+      {
+        faultId: 'power-boot-2026',
+        faultNameAr: 'أعطال الباور والـ Apex Engine لعام 2026',
+        faultNameEn: '2026 Power Boot & Apex Engine Rails',
+        testPoints: [
+          {
+            id: 'tp-s26-vreg-1v2',
+            name: 'TP501_VDD_1V2_APEX',
+            railName: 'VDD_1V2_GEN5',
+            xPercent: 45,
+            yPercent: 38,
+            layer: 'TOP',
+            componentOwner: 'U1001 (Main PMIC S8750)',
+            diodeModeReading: 0.445,
+            diodeMin: 0.410,
+            diodeMax: 0.480,
+            voltageNominal: '1.20V DC',
+            resistanceGnd: '18.2 kΩ',
+            traceColor: '#10b981',
+            descriptionAr: 'خط التغذية الأساسي لمعالج Snapdragon 8 Gen 5. انخفاضه يسبب موت الهاتف التام.',
+            descriptionEn: 'Primary 1.2V rail for Snapdragon 8 Gen 5. Low voltage causes dead boot.',
+            possibleCausesAr: ['شورت في مكثفات حول المعالج', 'تلف آيسي الباور الرئيسي'],
+            possibleCausesEn: ['Short on AP capacitors', 'Main PMIC failure']
+          }
+        ]
+      }
+    ]
+  },
+  {
+    modelId: 'apple-iphone17pm',
+    modelName: 'iPhone 17 Pro Max (A3400)',
+    brand: 'Apple',
+    boardRevision: '820-2026-A',
+    faultCategories: [
+      {
+        faultId: 'charging-pd-2026',
+        faultNameAr: 'عطل الشحن السريع وحماية Neural Core',
+        faultNameEn: 'Neural Core & PD 3.1 Charging Fault',
+        testPoints: [
+          {
+            id: 'tp-ip17-vbus',
+            name: 'TP701_VBUS_PD3.1',
+            railName: 'PP_VBUS_24V_MAX',
+            xPercent: 32,
+            yPercent: 80,
+            layer: 'BOTTOM',
+            componentOwner: 'U6200 (Hydra-Next PD)',
+            diodeModeReading: 0.590,
+            diodeMin: 0.560,
+            diodeMax: 0.620,
+            voltageNominal: '5.0V / 24.0V DC',
+            resistanceGnd: '62.0 kΩ',
+            traceColor: '#a855f7',
+            descriptionAr: 'دخل الشحن المتطور PD 3.1 بقدرة 24 فولت. أي شورت هنا يمنع الشحن السريع.',
+            descriptionEn: 'Advanced PD 3.1 24V charging input. Short here breaks fast charging.',
+            possibleCausesAr: ['تلف منفذ USB-C أو آيسي Hydra-Next'],
+            possibleCausesEn: ['USB-C port damage or Hydra-Next IC failure']
+          }
+        ]
+      }
+    ]
+  },
+  {
     modelId: 'samsung-s24u',
     modelName: 'Galaxy S24 Ultra 5G (SM-S928B)',
     brand: 'Samsung',

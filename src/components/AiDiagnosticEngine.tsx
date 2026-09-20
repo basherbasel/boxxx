@@ -153,6 +153,19 @@ const SAMPLE_LOGS = {
 09-19 15:21:04.140  1042  1042 E ImeiProvider: read_nv_item(NV_UE_IMEI_I) failed: NV_NOT_ALLOCATED (EFS corrupted)`
 };
 
+import { Interactive3dBoardViewer } from './Interactive3dBoardViewer';
+
+const detectHighlightedComponent = (analysis: any): string | null => {
+  if (!analysis) return null;
+  const text = `${analysis.summary} ${analysis.culpritModule}`.toLowerCase();
+  if (text.includes('cpu') || text.includes('processor')) return 'cpu';
+  if (text.includes('power') || text.includes('pmic') || text.includes('vbus') || text.includes('charging')) return 'pmic';
+  if (text.includes('storage') || text.includes('ufs') || text.includes('emmc') || text.includes('memory')) return 'storage';
+  if (text.includes('wifi') || text.includes('bluetooth') || text.includes('bt')) return 'wifi';
+  if (text.includes('rf') || text.includes('network') || text.includes('baseband') || text.includes('transceiver')) return 'rf-transceiver';
+  return null;
+};
+
 export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
   device,
   onApplyFix,
@@ -166,6 +179,7 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
   const [logText, setLogText] = useState(SAMPLE_LOGS.kernel_panic);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [highlightedComponentId, setHighlightedComponentId] = useState<string | null>(null);
 
   // MasterFix Copilot Query State
   const [copilotQuery, setCopilotQuery] = useState(
@@ -181,6 +195,7 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
     if (!copilotQuery.trim()) return;
     setIsCopilotConsulting(true);
     setCopilotResponse(null);
+    setHighlightedComponentId(null);
 
     try {
       const response = await fetch('/api/ai/copilot-consult', {
@@ -197,6 +212,7 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
       const data = await response.json();
       if (data.success && data.result) {
         setCopilotResponse(data.result);
+        setHighlightedComponentId(detectHighlightedComponent(data.result));
       }
     } catch (e) {
       console.error(e);
@@ -208,6 +224,7 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
   const handleDiagnose = async () => {
     setIsAnalyzing(true);
     setAnalysisResult(null);
+    setHighlightedComponentId(null);
 
     try {
       const response = await fetch('/api/ai/diagnose', {
@@ -224,6 +241,7 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
       const data = await response.json();
       if (data.success && data.analysis) {
         setAnalysisResult(data.analysis);
+        setHighlightedComponentId(detectHighlightedComponent(data.analysis));
       }
     } catch (e) {
       console.error(e);
@@ -501,6 +519,18 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
                 </p>
               </div>
 
+              {/* 3D PCB Viewer Integration */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="relative z-10"
+              >
+                <Interactive3dBoardViewer 
+                  highlightComponentId={highlightedComponentId} 
+                  lang={lang} 
+                />
+              </motion.div>
+
               {/* Hardware PCB Map Auto-Linked Card */}
               {copilotDomain === 'HARDWARE' && (
                 <div className="relative z-10 preserve-3d">
@@ -714,6 +744,18 @@ export const AiDiagnosticEngine: React.FC<AiDiagnosticEngineProps> = ({
                         ))}
                       </div>
                     </div>
+
+                    {/* 3D PCB Viewer Integration */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="relative z-10"
+                    >
+                      <Interactive3dBoardViewer 
+                        highlightComponentId={highlightedComponentId} 
+                        lang={lang} 
+                      />
+                    </motion.div>
                   </div>
                 ) : (
                   <div className="py-24 text-center space-y-6">
