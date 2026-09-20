@@ -1,0 +1,8 @@
+{
+  "name": "Remix OmniFix Pro v5.0",
+  "description": "The ultimate clinical neural workstation for mobile diagnostics, protocol flashing, and 0-Day security bypasses. Integrated with a live global exploit repository.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
