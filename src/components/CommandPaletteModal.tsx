@@ -20,6 +20,10 @@ import {
   ShieldCheck,
   Scissors,
   Award,
+  Satellite,
+  Radio,
+  Gauge,
+  Tv,
   X
 } from 'lucide-react';
 import { useWorkstation } from '../context/WorkstationContext';
@@ -93,6 +97,56 @@ export const CommandPaletteModal: React.FC = () => {
       icon: Scissors,
       color: 'text-cyan-400',
       tabId: 'firmware-slicer'
+    },
+    {
+      id: 'security-bypass',
+      titleAr: 'استوديو السوفت وير المتقدم وتخطي الحمايات والتوثيق (Security & KG Bypass Lab)',
+      titleEn: 'Advanced Software Flasher & Security Bypass Studio (2026)',
+      subtitleAr: 'تخطي Knox Guard / MDM، توثيق كوالكوم VIP Sahara، معالجات Dimensity BROM DMA، ورام ديسك آبل iOS 18',
+      subtitleEn: 'Knox Guard / MDM shadow unlock, Qualcomm Sahara VIP auth bypass, MediaTek Dimensity BROM DMA, Apple iOS Ramdisk',
+      icon: Zap,
+      color: 'text-cyan-400',
+      tabId: 'security-bypass'
+    },
+    {
+      id: 'smart-bench',
+      titleAr: 'طاولة الصيانة الذكية وتحليل منحنى إقلاع الباور (Smart Hardware Bench & Boot Curve)',
+      titleEn: 'Smart Hardware Bench & Boot Curve Diagnostic Station',
+      subtitleAr: 'تحكم متزامن مع كاوية JBC/Aixun الذكية، الهوت إير، راسم نبضات الباور سبلاي، وحوض الألتراسونيك',
+      subtitleEn: 'IoT sync with precision soldering irons, hot-air station, 12-second live boot waveform analyzer & chemical bath',
+      icon: Gauge,
+      color: 'text-amber-400',
+      tabId: 'smart-bench'
+    },
+    {
+      id: 'eeprom-programmer',
+      titleAr: 'استوديو برمجة TrueTone والبطارية BMS وبصمة الوجه (TrueTone & Battery BMS Studio)',
+      titleEn: 'TrueTone, Battery BMS & Face ID Cryptokey Programmer',
+      subtitleAr: 'استعادة التروتون، تصفير دورات البطارية (100% Health)، تخطي رسالة القطعة غير الأصلية، وترميم Face ID',
+      subtitleEn: 'EEPROM data transfer for TrueTone, 100% Battery BMS health reset, non-genuine part warning bypass & Dot Projector restore',
+      icon: Tv,
+      color: 'text-violet-400',
+      tabId: 'eeprom-programmer'
+    },
+    {
+      id: 'thermal-lidar',
+      titleAr: 'استوديو التصوير الحراري بالليزر وتحديد الشورت (AI Thermal LiDAR Studio)',
+      titleEn: 'AI Thermal LiDAR & Micro-Short Triangulation Studio',
+      subtitleAr: 'فحص مصفوفة الأشعة تحت الحمراء وعزل التسريب الميكروي وحقن الفولتية الآمنة VCC_MAIN',
+      subtitleEn: 'High-precision IR thermal matrix, micro-leakage triangulation (<0.02mA) & calibrated DC injection',
+      icon: Flame,
+      color: 'text-red-400',
+      tabId: 'thermal-lidar'
+    },
+    {
+      id: 'satellite-ntn',
+      titleAr: 'استوديو الاتصال الفضائي SOS وبرمجة شرائح eSIM ومودم 5G (eSIM & Satellite SOS Studio)',
+      titleEn: 'eSIM & 3GPP Satellite SOS / 5G-Advanced Studio',
+      subtitleAr: 'إدارة شرائح eUICC، معالجة انزياح دوبلر الفضائي، ومعايرة QCN/NVRAM',
+      subtitleEn: 'GSMA SGP.22 eUICC LPA manager, 3GPP Rel-17 NTN satellite modem calibration & QCN rebuild',
+      icon: Satellite,
+      color: 'text-cyan-400',
+      tabId: 'satellite-ntn'
     },
     {
       id: 'forensic-cert',

@@ -34,6 +34,11 @@ import { ProtocolCodeLab } from '../ProtocolCodeLab';
 import { OsSecurityArchitectureLab } from '../OsSecurityArchitectureLab';
 import { FirmwarePartitionSlicer } from '../FirmwarePartitionSlicer';
 import { ForensicCertificationStudio } from '../ForensicCertificationStudio';
+import { AiThermalLidarStudio } from '../AiThermalLidarStudio';
+import { EsimSatelliteSpectrumStudio } from '../EsimSatelliteSpectrumStudio';
+import { SmartHardwareBenchController } from '../SmartHardwareBenchController';
+import { EepromTrueToneBmsStudio } from '../EepromTrueToneBmsStudio';
+import { SoftwareSecurityBypassLab } from '../SoftwareSecurityBypassLab';
 
 export function ToolCanvas() {
   const { 
@@ -280,6 +285,62 @@ export function ToolCanvas() {
           lang={lang}
           device={currentDevice}
           onAddLog={addLog}
+        />
+      );
+
+    case 'thermal-lidar':
+    case 'ai-thermal-lidar':
+      return (
+        <AiThermalLidarStudio
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
+        />
+      );
+
+    case 'satellite-ntn':
+    case 'esim-satellite':
+      return (
+        <EsimSatelliteSpectrumStudio
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
+        />
+      );
+
+    case 'smart-bench':
+    case 'bench-controller':
+      return (
+        <SmartHardwareBenchController
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
+        />
+      );
+
+    case 'eeprom-programmer':
+    case 'truetone-bms':
+      return (
+        <EepromTrueToneBmsStudio
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
+        />
+      );
+
+    case 'security-bypass':
+    case 'software-bypass':
+    case 'software-lab':
+      return (
+        <SoftwareSecurityBypassLab
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
         />
       );
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Cpu, 
   Sparkles, 
@@ -8,20 +8,39 @@ import {
   Wrench, 
   Activity, 
   Database, 
-  LayoutDashboard,
-  Smartphone,
-  Flame,
-  Globe,
-  HardDrive,
-  RotateCcw,
-  Terminal,
-  Search,
-  ArrowRight,
-  BookOpen,
-  Layers,
-  ShieldCheck,
-  Scissors,
-  Award
+  LayoutDashboard, 
+  Smartphone, 
+  Flame, 
+  Globe, 
+  HardDrive, 
+  RotateCcw, 
+  Terminal, 
+  Search, 
+  ArrowRight, 
+  BookOpen, 
+  Layers, 
+  ShieldCheck, 
+  Scissors, 
+  Award, 
+  Satellite, 
+  Radio, 
+  Crosshair, 
+  Gauge, 
+  Tv, 
+  BatteryCharging, 
+  Unlock,
+  CheckCircle2,
+  Sliders,
+  Filter,
+  Package,
+  QrCode,
+  FileCode,
+  Lock,
+  Workflow,
+  ExternalLink,
+  ChevronRight,
+  TrendingUp,
+  Boxes
 } from 'lucide-react';
 
 interface CentralDashboardProps {
@@ -29,263 +48,680 @@ interface CentralDashboardProps {
   lang: 'en' | 'ar';
 }
 
+interface ToolDefinition {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  category: 'AI_FAST' | 'SOFTWARE_SECURITY' | 'HARDWARE_BENCH' | 'NETWORK_RF' | 'SHOP_QA';
+  categoryLabelEn: string;
+  categoryLabelAr: string;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+  color: string;
+  bgGlow: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  tag: string;
+}
+
 export const CentralDashboard: React.FC<CentralDashboardProps> = ({ onNavigate, lang }) => {
   const isAr = lang === 'ar';
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
-  const quickActions = [
-    { id: 'apex-agent', titleEn: 'AI ApexAgent', titleAr: 'الوكيل الذكي', icon: Cpu, color: 'bg-indigo-500', descEn: 'Autonomous multi-core AI repair assistant.', descAr: 'مساعد إصلاح ذكي متعدد الأنوية.' },
-    { id: 'agent-encyclopedia', titleEn: 'Skills Encyclopedia', titleAr: 'موسوعة خبرات الوكيل', icon: BookOpen, color: 'bg-violet-600', descEn: 'Software, Hardware, Low-Level & OS Knowledge.', descAr: 'علوم السوفت وير والهارد وير ولغات البرمجة والأنظمة.' },
-    { id: 'smart-1click', titleEn: '1-Click Studio', titleAr: 'استوديو النقرة الواحدة', icon: Sparkles, color: 'bg-emerald-500', descEn: 'Automated unbrick and bypass procedures.', descAr: 'إجراءات الإحياء والتخطي الآلية.' },
-    { id: 'fault-repair', titleEn: 'Universal Faults', titleAr: 'إصلاح كافة الأعطال', icon: Wrench, color: 'bg-amber-500', descEn: 'Library of thousands of repair protocols.', descAr: 'مكتبة تضم آلاف بروتوكولات الإصلاح.' },
-    { id: 'frp', titleEn: 'FRP Bypass Hub', titleAr: 'تخطي حساب جوجل', icon: ShieldAlert, color: 'bg-rose-500', descEn: 'Advanced account and security removal.', descAr: 'إزالة الحسابات والحماية المتقدمة.' },
-  ];
+  // Master Tools Inventory Categorized & Harmonized
+  const allTools: ToolDefinition[] = useMemo(() => [
+    // --- Category: AI & 1-Click Fast Repair ---
+    {
+      id: 'smart-1click',
+      nameEn: 'Smart 1-Click Studio',
+      nameAr: 'استوديو النقرة الواحدة الذكي',
+      category: 'AI_FAST',
+      categoryLabelEn: 'AI & Quick Action',
+      categoryLabelAr: 'الذكاء والإصلاح الفوري',
+      icon: Sparkles,
+      color: 'text-emerald-400',
+      bgGlow: 'from-emerald-500/20 to-teal-500/5',
+      descriptionEn: 'Automated 1-click bootloop fix, FRP wipe, and diagnostic scans.',
+      descriptionAr: 'إصلاح وحل مشاكل الإقلاع وتخطي الحمايات والفحص بضغطة زر واحدة.',
+      tag: 'HOT'
+    },
+    {
+      id: 'apex-agent',
+      nameEn: 'AI ApexAgent Assistant',
+      nameAr: 'الوكيل الذكي ApexAgent',
+      category: 'AI_FAST',
+      categoryLabelEn: 'AI & Quick Action',
+      categoryLabelAr: 'الذكاء والإصلاح الفوري',
+      icon: Cpu,
+      color: 'text-indigo-400',
+      bgGlow: 'from-indigo-500/20 to-purple-500/5',
+      descriptionEn: 'Multi-core neural technician reasoning through complex schematics.',
+      descriptionAr: 'المساعد الذكي متعدد الأنوية لتحليل المخططات والأعطال الصعبة.',
+      tag: 'AI V5'
+    },
+    {
+      id: 'agent-encyclopedia',
+      nameEn: 'Skills & OS Encyclopedia',
+      nameAr: 'موسوعة خبرات الوكيل والأنظمة',
+      category: 'AI_FAST',
+      categoryLabelEn: 'AI & Quick Action',
+      categoryLabelAr: 'الذكاء والإصلاح الفوري',
+      icon: BookOpen,
+      color: 'text-violet-400',
+      bgGlow: 'from-violet-500/20 to-indigo-500/5',
+      descriptionEn: 'Complete knowledgebase for Android kernels, iOS SEP, & hardware.',
+      descriptionAr: 'مرجع شامل لعلوم أنظمة التشغيل، النواة، وحمايات الأجهزة والمعالجات.',
+      tag: 'GUIDE'
+    },
+    {
+      id: 'ai-diagnostics',
+      nameEn: 'AI Diagnostics & Fault Matrix',
+      nameAr: 'التشخيص الذكي ومصفوفة الأعطال',
+      category: 'AI_FAST',
+      categoryLabelEn: 'AI & Quick Action',
+      categoryLabelAr: 'الذكاء والإصلاح الفوري',
+      icon: Activity,
+      color: 'text-cyan-400',
+      bgGlow: 'from-cyan-500/20 to-blue-500/5',
+      descriptionEn: 'Deep hardware and system sensor telemetry with live troubleshooting.',
+      descriptionAr: 'فحص الحساسات والجهود وتقديم خطة إصلاح تفصيلية بالصور والخطوات.',
+      tag: 'DIAG'
+    },
 
-  const categories = [
-    { 
-      nameEn: 'Diagnostics & Logic', 
-      nameAr: 'التشخيص والمنطق',
-      tools: [
-        { id: 'ai-diagnostics', nameEn: 'AI Diagnostics', nameAr: 'التشخيص الذكي', icon: Activity },
-        { id: 'ai-oscilloscope', nameEn: 'Oscilloscope', nameAr: 'الأوسيلوسكوب', icon: Activity },
-        { id: 'thermal-rosin', nameEn: 'Thermal Analysis', nameAr: 'التحليل الحراري', icon: Flame },
-        { id: 'pcb-explorer', nameEn: 'PCB Explorer', nameAr: 'مستعرض البوردة', icon: LayoutDashboard },
-      ]
+    // --- Category: Software & Security Bypass ---
+    {
+      id: 'security-bypass',
+      nameEn: 'Security & KG Bypass Lab',
+      nameAr: 'مختبر السوفت وتخطي الحمايات 2026',
+      category: 'SOFTWARE_SECURITY',
+      categoryLabelEn: 'Software & Security',
+      categoryLabelAr: 'السوفت وير والحمايات',
+      icon: Unlock,
+      color: 'text-rose-400',
+      bgGlow: 'from-rose-500/20 to-amber-500/5',
+      descriptionEn: 'Knox Guard (KG), Qualcomm Sahara VIP Auth, MediaTek Dimensity BROM.',
+      descriptionAr: 'تخطي حماية Knox Guard، حسابات الأقساط، وتوثيق خوادم كوالكوم وميدياتك.',
+      tag: 'SECURITY'
     },
-    { 
-      nameEn: 'Programming & Network', 
-      nameAr: 'البرمجة والشبكة',
-      tools: [
-        { id: 'flasher', nameEn: 'Multi-Flasher', nameAr: 'التفليش المتعدد', icon: Zap },
-        { id: 'firmware-slicer', nameEn: 'Firmware Slicer', nameAr: 'تقطيع الفلاشات الفوري', icon: Scissors },
-        { id: 'network', nameEn: 'IMEI/NVRAM', nameAr: 'الشبكة والسيريال', icon: Globe },
-        { id: 'ufs-memory', nameEn: 'UFS/eMMC', nameAr: 'برمجة الذاكرة', icon: HardDrive },
-        { id: 'quantum-bypass', nameEn: 'Quantum Bypass', nameAr: 'التخطي الفائق', icon: Zap },
-      ]
+    {
+      id: 'flasher',
+      nameEn: 'Universal Multi-Flasher',
+      nameAr: 'برنامج التفليش الشامل',
+      category: 'SOFTWARE_SECURITY',
+      categoryLabelEn: 'Software & Security',
+      categoryLabelAr: 'السوفت وير والحمايات',
+      icon: Zap,
+      color: 'text-amber-400',
+      bgGlow: 'from-amber-500/20 to-orange-500/5',
+      descriptionEn: 'Direct write for Samsung Odin, MTK SP Flash, EDL 9008, & Fastboot.',
+      descriptionAr: 'تفليش أجهزة سامسونج، كوالكوم، شاومي، وأوبو مع فحص قطاعات الذاكرة.',
+      tag: 'CORE'
     },
-    { 
-      nameEn: 'Research & Data', 
-      nameAr: 'الأبحاث والبيانات',
-      tools: [
-        { id: 'oem-database', nameEn: 'OEM JSON DB', nameAr: 'قاعدة الموديلات', icon: Database },
-        { id: 'firmware-matching', nameEn: 'Firmware Hub', nameAr: 'مركز الفلاشات', icon: ShieldAlert },
-        { id: 'forensic-cert', nameEn: 'QA Lab Certificate', nameAr: 'شهادات الفحص وضمان الجودة', icon: Award },
-        { id: 'hardware-workbench', nameEn: 'Workbench', nameAr: 'بيئة الهاردوير', icon: Cpu },
-        { id: 'os-security-lab', nameEn: 'OS & Security Lab', nameAr: 'مختبر نظم التشغيل والحماية', icon: Layers },
-        { id: 'codelab', nameEn: 'Protocol Lab', nameAr: 'مختبر الأكواد', icon: Terminal },
-      ]
+    {
+      id: 'firmware-slicer',
+      nameEn: 'Firmware & Partition Slicer',
+      nameAr: 'مقطع الفلاشات واستخراج البوت',
+      category: 'SOFTWARE_SECURITY',
+      categoryLabelEn: 'Software & Security',
+      categoryLabelAr: 'السوفت وير والحمايات',
+      icon: Scissors,
+      color: 'text-blue-400',
+      bgGlow: 'from-blue-500/20 to-cyan-500/5',
+      descriptionEn: 'Carve boot.img, init_boot, vbmeta without downloading 10GB ROMs.',
+      descriptionAr: 'استخراج وتعديل ملفات البوت والروت في ثوانٍ دون تحميل فلاشات كاملة.',
+      tag: 'FAST'
+    },
+    {
+      id: 'quantum-bypass',
+      nameEn: 'Quantum Security Bypass Engine',
+      nameAr: 'محرك التخطي الفائق Quantum',
+      category: 'SOFTWARE_SECURITY',
+      categoryLabelEn: 'Software & Security',
+      categoryLabelAr: 'السوفت وير والحمايات',
+      icon: ShieldAlert,
+      color: 'text-purple-400',
+      bgGlow: 'from-purple-500/20 to-pink-500/5',
+      descriptionEn: 'Advanced iCloud Ramdisk, FRP wipe, and MDM policy neutralizer.',
+      descriptionAr: 'تخطي حسابات الآيكلود، حساب جوجل، وإلغاء قيود الإدارة عن بُعد.',
+      tag: 'BYPASS'
+    },
+    {
+      id: 'dead-boot',
+      nameEn: 'Dead Boot & BROM Unbrick',
+      nameAr: 'إحياء البوت الميت EDL 9008',
+      category: 'SOFTWARE_SECURITY',
+      categoryLabelEn: 'Software & Security',
+      categoryLabelAr: 'السوفت وير والحمايات',
+      icon: RotateCcw,
+      color: 'text-red-400',
+      bgGlow: 'from-red-500/20 to-rose-500/5',
+      descriptionEn: 'Force flash emergency loaders on black-screen bricked motherboards.',
+      descriptionAr: 'إنعاش الهواتف الفاقدة للإقلاع وإعادة بناء قطاعات البوت الأساسية.',
+      tag: 'RECOVERY'
+    },
+
+    // --- Category: Hardware Bench & Microsoldering ---
+    {
+      id: 'smart-bench',
+      nameEn: 'Smart Hardware Bench & Boot Curve',
+      nameAr: 'طاولة الصيانة ومنحنى الباور سبلاي',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: Gauge,
+      color: 'text-amber-400',
+      bgGlow: 'from-amber-500/20 to-yellow-500/5',
+      descriptionEn: 'Live 12s boot current wave, JBC/Aixun iron sync, & ultrasonic bath.',
+      descriptionAr: 'راسم نبضات الإقلاع 12 ثانية والتحكم بكاوية اللحام الذكية والهوت إير.',
+      tag: 'HARDWARE'
+    },
+    {
+      id: 'eeprom-programmer',
+      nameEn: 'TrueTone, Battery BMS & Face ID',
+      nameAr: 'برمجة التروتون وصحة البطارية 100%',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: Tv,
+      color: 'text-violet-400',
+      bgGlow: 'from-violet-500/20 to-purple-500/5',
+      descriptionEn: 'EEPROM data copy, 0-cycle BMS 100% capacity reset, & Dot Projector.',
+      descriptionAr: 'تصفير دورات البطارية وترميم TrueTone وتخطي رسائل القطع غير الأصلية.',
+      tag: 'EEPROM'
+    },
+    {
+      id: 'thermal-lidar',
+      nameEn: 'AI Thermal LiDAR & Shorts',
+      nameAr: 'كاميرا التصوير الحراري وتحديد الشورت',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: Flame,
+      color: 'text-rose-400',
+      bgGlow: 'from-rose-500/20 to-red-500/5',
+      descriptionEn: 'Real-time IR thermal map with calibrated DC injection (<0.02mA).',
+      descriptionAr: 'عزل المكثفات والأيسيات الساخنة المسببة للشورت والتسريب بدقة الميكرو.',
+      tag: 'THERMAL'
+    },
+    {
+      id: 'ai-oscilloscope',
+      nameEn: 'Digital Logic Oscilloscope',
+      nameAr: 'الأوسيلوسكوب الرقمي وفحص الإشارات',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: Activity,
+      color: 'text-blue-400',
+      bgGlow: 'from-blue-500/20 to-indigo-500/5',
+      descriptionEn: 'Dual-channel I2C/SPI bus waveform analyzer with auto decoders.',
+      descriptionAr: 'فحص نبضات خطوط البيانات والترددات واكتشاف انقطاع مسارات التغذية.',
+      tag: 'SIGNALS'
+    },
+    {
+      id: 'pcb-explorer',
+      nameEn: 'Interactive PCB Board Explorer',
+      nameAr: 'مستعرض ومخططات البوردة التفاعلية',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: LayoutDashboard,
+      color: 'text-teal-400',
+      bgGlow: 'from-teal-500/20 to-emerald-500/5',
+      descriptionEn: 'Layer-by-layer PCB trace inspection and testpoint locator.',
+      descriptionAr: 'تتبع المسارات بين الطبقات ونقاط الفحص Testpoints لكافة الموديلات.',
+      tag: 'PCB'
+    },
+    {
+      id: 'hardware-workbench',
+      nameEn: 'Hardware Lab & Microsoldering',
+      nameAr: 'بيئة الهاردوير ومختبر الشبلنة',
+      category: 'HARDWARE_BENCH',
+      categoryLabelEn: 'Hardware & Bench',
+      categoryLabelAr: 'الهاردوير وطاولة الصيانة',
+      icon: Cpu,
+      color: 'text-indigo-400',
+      bgGlow: 'from-indigo-500/20 to-blue-500/5',
+      descriptionEn: 'Reballing profiles, interposer separation, and CNC IC grinder specs.',
+      descriptionAr: 'معايير فصل طبقات البوردة المزدوجة وشبلنة معالجات PoP بأمان.',
+      tag: 'REWORK'
+    },
+
+    // --- Category: RF, Network & Satellite ---
+    {
+      id: 'satellite-ntn',
+      nameEn: 'eSIM & Satellite SOS Studio',
+      nameAr: 'استوديو الاتصال الفضائي و eSIM',
+      category: 'NETWORK_RF',
+      categoryLabelEn: 'Network & RF',
+      categoryLabelAr: 'الشبكة والاتصال الفضائي',
+      icon: Satellite,
+      color: 'text-cyan-400',
+      bgGlow: 'from-cyan-500/20 to-blue-500/5',
+      descriptionEn: 'GSMA eUICC profile manager and 3GPP Rel-17 NTN satellite tuner.',
+      descriptionAr: 'إدارة وتفعيل شرائح eSIM الإلكترونية ومعايرة مودم الاتصال الفضائي 5G.',
+      tag: 'SATELLITE'
+    },
+    {
+      id: 'network',
+      nameEn: 'IMEI, Baseband & NVRAM Rebuilder',
+      nameAr: 'إصلاح الشبكة والسيريال و QCN',
+      category: 'NETWORK_RF',
+      categoryLabelEn: 'Network & RF',
+      categoryLabelAr: 'الشبكة والاتصال الفضائي',
+      icon: Globe,
+      color: 'text-emerald-400',
+      bgGlow: 'from-emerald-500/20 to-teal-500/5',
+      descriptionEn: 'Restore null IMEI, fix No Service, and flash calibrated QCN/EFS.',
+      descriptionAr: 'حل مشكلة الهاتف لا يقرأ شريحة، تصليح السيريال، واستعادة ملفات الشبكة.',
+      tag: 'NETWORK'
+    },
+    {
+      id: 'ufs-memory',
+      nameEn: 'UFS 4.0 & eMMC Direct Programmer',
+      nameAr: 'مبرمجة الذواكر UFS و eMMC',
+      category: 'NETWORK_RF',
+      categoryLabelEn: 'Network & RF',
+      categoryLabelAr: 'الشبكة والاتصال الفضائي',
+      icon: HardDrive,
+      color: 'text-purple-400',
+      bgGlow: 'from-purple-500/20 to-indigo-500/5',
+      descriptionEn: 'ISP direct pinout, RPMB write, LUN partitioning, & health tests.',
+      descriptionAr: 'قراءة وكتابة قطاعات الذاكرة عبر ISP وفحص صحة الرقاقة قبل الاستبدال.',
+      tag: 'MEMORY'
+    },
+
+    // --- Category: Shop Management & QA Forensics ---
+    {
+      id: 'management',
+      nameEn: 'Shop Management & Barcode Labels',
+      nameAr: 'إدارة المحل واستيكرات الباركود والواتساب',
+      category: 'SHOP_QA',
+      categoryLabelEn: 'Shop & QA',
+      categoryLabelAr: 'إدارة المحل وضمان الجودة',
+      icon: Package,
+      color: 'text-amber-400',
+      bgGlow: 'from-amber-500/20 to-orange-500/5',
+      descriptionEn: 'Thermal chassis stickers, 1-click WhatsApp alerts, & parts profit CRM.',
+      descriptionAr: 'طباعة لاصق باركود للجهاز، إشعارات واتساب للزبائن، وحساب الأرباح.',
+      tag: 'BUSINESS'
+    },
+    {
+      id: 'forensic-cert',
+      nameEn: 'Forensic QA Lab Certificate',
+      nameAr: 'شهادات الفحص وضمان الجودة المعتمدة',
+      category: 'SHOP_QA',
+      categoryLabelEn: 'Shop & QA',
+      categoryLabelAr: 'إدارة المحل وضمان الجودة',
+      icon: Award,
+      color: 'text-indigo-400',
+      bgGlow: 'from-indigo-500/20 to-violet-500/5',
+      descriptionEn: '14-point lab quality certification with printable tamper-proof QR.',
+      descriptionAr: 'تصدير وطباعة شهادة فحص وضمان رسمية برمز QR بعد إتمام عملية الصيانة.',
+      tag: 'QA LAB'
+    },
+    {
+      id: 'oem-database',
+      nameEn: 'OEM Pinouts & Schematics DB',
+      nameAr: 'قاعدة بيانات المخططات والتست بوينت',
+      category: 'SHOP_QA',
+      categoryLabelEn: 'Shop & QA',
+      categoryLabelAr: 'إدارة المحل وضمان الجودة',
+      icon: Database,
+      color: 'text-blue-400',
+      bgGlow: 'from-blue-500/20 to-cyan-500/5',
+      descriptionEn: 'Over 50,000 phone models with testpoints, diode readings, & ROMs.',
+      descriptionAr: 'أكثر من 50,000 هاتف مع قيم الممانعات، نقاط EDL، وروابط الفلاشات الرسمية.',
+      tag: 'DATABASE'
+    },
+    {
+      id: 'os-security-lab',
+      nameEn: 'OS & Security Architecture Lab',
+      nameAr: 'مختبر هندسة الأنظمة والحماية',
+      category: 'SHOP_QA',
+      categoryLabelEn: 'Shop & QA',
+      categoryLabelAr: 'إدارة المحل وضمان الجودة',
+      icon: Layers,
+      color: 'text-emerald-400',
+      bgGlow: 'from-emerald-500/20 to-teal-500/5',
+      descriptionEn: 'Deep-dive security models, TrustZone, Knox TEE, & SEP cryptography.',
+      descriptionAr: 'تحليل بيئة التنفيذ الموثوقة TEE وشفرات الأمان المتقدمة لمختلف الأنظمة.',
+      tag: 'RESEARCH'
+    },
+    {
+      id: 'codelab',
+      nameEn: 'Hardware Protocol & AT Terminal',
+      nameAr: 'مختبر بروتوكولات الأجهزة وأوامر AT',
+      category: 'SHOP_QA',
+      categoryLabelEn: 'Shop & QA',
+      categoryLabelAr: 'إدارة المحل وضمان الجودة',
+      icon: Terminal,
+      color: 'text-slate-300',
+      bgGlow: 'from-slate-500/20 to-zinc-500/5',
+      descriptionEn: 'Low-level UART, ADB, Fastboot, and modem raw command console.',
+      descriptionAr: 'منصة إرسال الأوامر المباشرة للمودم والمعالج عبر بروتوكولات UART و USB.',
+      tag: 'TERMINAL'
+    }
+  ], []);
+
+  // Filtered Tools
+  const filteredTools = useMemo(() => {
+    return allTools.filter(tool => {
+      const matchesCategory = selectedCategory === 'ALL' || tool.category === selectedCategory;
+      const q = searchQuery.toLowerCase().trim();
+      if (!q) return matchesCategory;
+
+      const matchesSearch = 
+        tool.nameEn.toLowerCase().includes(q) ||
+        tool.nameAr.includes(q) ||
+        tool.descriptionEn.toLowerCase().includes(q) ||
+        tool.descriptionAr.includes(q) ||
+        tool.tag.toLowerCase().includes(q);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [allTools, selectedCategory, searchQuery]);
+
+  // Guided Workflow Presets
+  const guidedWorkflows = [
+    {
+      id: 'wf-samsung-kg',
+      titleEn: 'Samsung Knox / KG Bypass Workflow',
+      titleAr: 'مسار تخطي حماية سامسونج Knox و KG',
+      stepsEn: '1. Port Switcher -> 2. KG Shadow RPMB -> 3. FastbootD Patch -> 4. QA Certificate',
+      stepsAr: '١. ضبط المنفذ -> ٢. عزل Knox و RPMB -> ٣. تفليش البوت المعدل -> ٤. طباعة شهادة الضمان',
+      actionTab: 'security-bypass',
+      badge: 'POPULAR'
+    },
+    {
+      id: 'wf-iphone-truetone',
+      titleEn: 'iPhone 100% BMS & TrueTone Restore',
+      titleAr: 'مسار تصفير بطارية الآيفون وترميم التروتون',
+      stepsEn: '1. TrueTone MTSN Copy -> 2. BMS 0-Cycle Reset -> 3. Face ID Align -> 4. Thermal Sticker',
+      stepsAr: '١. قراءة سيريال التروتون -> ٢. تصفير دورات البطارية -> ٣. ترميم Face ID -> ٤. طباعة باركود العميل',
+      actionTab: 'eeprom-programmer',
+      badge: 'HARDWARE'
+    },
+    {
+      id: 'wf-dead-short',
+      titleEn: 'Dead Boot & VCC_MAIN Short Isolation',
+      titleAr: 'مسار فحص الهواتف الميتة والشورت الحراري',
+      stepsEn: '1. Smart Bench Waveform -> 2. Thermal LiDAR -> 3. JBC Micro-Rework -> 4. Oscilloscope',
+      stepsAr: '١. فحص منحنى الباور سبلاي -> ٢. كاميرا الحرارة -> ٣. لحام واستبدال المكثف -> ٤. قياس الإشارات',
+      actionTab: 'smart-bench',
+      badge: 'PRECISION'
     }
   ];
 
   return (
-    <div className="p-10 space-y-16 bg-slate-50/30 min-h-screen">
-      {/* Hero Mission Control Section */}
-      <div className="relative overflow-hidden rounded-[3.5rem] bg-slate-950 p-16 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)] border border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#4f46e522,transparent_70%)]" />
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-500/[0.03] to-transparent" />
-        
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16">
-          <div className="max-w-3xl space-y-8">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-3 px-5 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[11px] font-black uppercase tracking-[0.4em]"
-            >
-              <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-              {isAr ? 'نظام التشغيل الهندسي الجيل الخامس' : 'Engineering OS v5.0 Active'}
-            </motion.div>
-            
-            <div className="space-y-4">
-              <motion.h1 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-5xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight"
-              >
-                {isAr ? 'مركز العمليات الذكي' : 'Strategic Mission Control'}
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-slate-400 text-xl leading-relaxed font-medium max-w-xl"
-              >
-                {isAr ? 'تحكم كامل في كافة أدوات البرمجة، التشخيص، وفك الحمايات عبر واجهة موحدة فائقة السرعة.' : 'Centralized orchestration for programming, diagnostics, and security bypass tools in a high-velocity environment.'}
-              </motion.p>
+    <div className="flex flex-col gap-10 p-4 lg:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
+      
+      {/* 🚀 Master Mission Control Header */}
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-8 lg:p-12 border border-indigo-500/20 shadow-2xl">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-indigo-600/15 via-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+          
+          <div className="space-y-4 max-w-3xl">
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-[11px] font-mono font-bold uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              {isAr ? 'منظومة الصيانة الاحترافية الفائقة • الجيل 2026' : 'OMNIFIX PRO ULTRA • QUANTUM ARCHITECTURE 2026'}
             </div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-wrap gap-5"
-            >
-              <button 
-                onClick={() => onNavigate('apex-agent')}
-                className="px-10 py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:-translate-y-1 transition-all flex items-center gap-4"
+            <h1 className="text-3xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              {isAr ? 'مركز العمليات والأدوات الموحد' : 'Unified Engineering Command Center'}
+            </h1>
+
+            <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-2xl">
+              {isAr 
+                ? 'البيئة المتكاملة لجميع أدوات السوفت وير، فك الحمايات، محطة الهاردوير، برمجة الذواكر والشاشات، وإدارة مركز الصيانة بتناسق وسلاسة فائقة.'
+                : 'Orchestrate next-generation software flasher, Knox & security bypass labs, IoT smart hardware bench, TrueTone/BMS programmers, and automated shop CRM.'}
+            </p>
+
+            {/* Quick Action Pills */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={() => onNavigate('smart-1click')}
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-slate-950 font-black text-xs rounded-2xl flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5"
               >
-                <Cpu className="w-4 h-4" />
-                {isAr ? 'بدء فحص المنظومة' : 'INITIALIZE SYSTEM SCAN'}
-                <ArrowRight className="w-4 h-4" />
+                <Sparkles size={16} />
+                {isAr ? 'الإصلاح الذكي السريع 1-Click' : 'Smart 1-Click Repair'}
               </button>
-              <button 
-                onClick={() => onNavigate('os-security-lab')}
-                className="px-8 py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(99,102,241,0.4)] hover:-translate-y-1 transition-all backdrop-blur-xl flex items-center gap-3"
+
+              <button
+                onClick={() => onNavigate('security-bypass')}
+                className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-slate-950 font-black text-xs rounded-2xl flex items-center gap-2 shadow-lg shadow-cyan-500/20 transition-all hover:-translate-y-0.5"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-300" />
-                {isAr ? 'مختبر الحمايات ونظم التشغيل' : 'OS & SECURITY LAB'}
+                <Unlock size={16} />
+                {isAr ? 'تخطي الحمايات و Knox' : 'Security & KG Bypass'}
               </button>
-              <button 
-                onClick={() => onNavigate('agent-encyclopedia')}
-                className="px-8 py-5 bg-white/10 hover:bg-white/15 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest border border-white/20 transition-all backdrop-blur-xl flex items-center gap-3"
+
+              <button
+                onClick={() => onNavigate('smart-bench')}
+                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-2xl flex items-center gap-2 border border-white/10 transition-all hover:-translate-y-0.5"
               >
-                <BookOpen className="w-4 h-4 text-indigo-400" />
-                {isAr ? 'موسوعة خبرات الوكيل واللغات' : 'SKILLS & OS ENCYCLOPEDIA'}
+                <Gauge size={16} className="text-amber-400" />
+                {isAr ? 'طاولة الصيانة والباور' : 'Smart Hardware Bench'}
               </button>
-              <button className="px-10 py-5 bg-white/5 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest border border-white/10 hover:bg-white/10 transition-all backdrop-blur-xl">
-                {isAr ? 'إحصائيات الشبكة' : 'NETWORK TELEMETRY'}
+
+              <button
+                onClick={() => onNavigate('management')}
+                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-2xl flex items-center gap-2 border border-white/10 transition-all hover:-translate-y-0.5"
+              >
+                <Package size={16} className="text-indigo-400" />
+                {isAr ? 'المحل والباركود والواتساب' : 'Shop Management & Dispatch'}
               </button>
-            </motion.div>
+            </div>
           </div>
-          
-          <div className="hidden lg:block relative">
-             <div className="grid grid-cols-2 gap-6 rotate-12 scale-110">
-                {[Zap, ShieldAlert, Activity, Database].map((Icon, i) => (
-                  <motion.div 
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 * i, type: 'spring' }}
-                    className="w-32 h-32 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl flex items-center justify-center relative group overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Icon className="w-10 h-10 text-indigo-400 group-hover:scale-110 transition-transform duration-500" />
-                  </motion.div>
-                ))}
-             </div>
+
+          {/* Real-time System Telemetry Badges */}
+          <div className="p-6 bg-slate-950/80 rounded-3xl border border-white/10 flex flex-col gap-4 backdrop-blur-xl w-full lg:w-72 shadow-2xl">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest flex items-center justify-between">
+              <span>WORKSTATION HEALTH</span>
+              <span className="text-emerald-400 font-bold">OPTIMAL</span>
+            </span>
+
+            <div className="space-y-2.5 font-mono text-xs">
+              <div className="flex justify-between text-slate-300">
+                <span className="text-slate-500">Security Engine:</span>
+                <span className="text-cyan-400 font-bold">Knox 3.10 / KG Bypass</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span className="text-slate-500">Hardware Link:</span>
+                <span className="text-amber-400 font-bold">JBC / Sugon IoT Online</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span className="text-slate-500">FastbootD Slot:</span>
+                <span className="text-emerald-400 font-bold">Dynamic A/B Ready</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span className="text-slate-500">Total Protocols:</span>
+                <span className="text-indigo-400 font-bold">32 Verified Tools</span>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
 
-      {/* Core Operational Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[240px]">
-        {/* Large Primary Action */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          onClick={() => onNavigate('smart-1click')}
-          className="md:col-span-8 md:row-span-2 group relative p-12 bg-white border border-slate-200 rounded-[3rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:border-indigo-200 transition-all text-left overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-emerald-500/[0.02] to-transparent pointer-events-none" />
-          <div className="w-20 h-20 rounded-[2rem] bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/40 group-hover:scale-110 transition-transform duration-700 mb-10">
-            <Sparkles className="w-10 h-10" />
+      {/* 🎯 Guided Workflow Paths for Instant Productivity */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Workflow size={20} className="text-indigo-400" />
+            <h2 className="text-base font-black text-white">
+              {isAr ? 'مسارات العمل السريعة الموجهة (Guided Precision Workflows)' : 'Instant 1-Click Guided Repair Workflows'}
+            </h2>
           </div>
-          <div className="max-w-md space-y-4">
-            <h3 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
-              {isAr ? 'استوديو النقرة الواحدة' : 'Smart 1-Click Studio'}
-            </h3>
-            <p className="text-lg text-slate-500 leading-relaxed font-medium">
-              {isAr ? 'أقوى محرك للأتمتة لإصلاح الهواتف، تخطي الحمايات، وإحياء الأجهزة الميتة بضغطة زر واحدة.' : 'The most powerful automation engine for repairing phones, bypassing security, and reviving dead devices with a single click.'}
-            </p>
-          </div>
-          <div className="absolute bottom-12 right-12 w-16 h-16 rounded-full border border-slate-200 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-all duration-500">
-            <ArrowRight className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors" />
-          </div>
-        </motion.button>
+          <span className="text-xs font-mono text-slate-400">FASTER TURNAROUND</span>
+        </div>
 
-        {/* Medium Action */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          onClick={() => onNavigate('apex-agent')}
-          className="md:col-span-4 md:row-span-1 group relative p-8 bg-slate-900 border border-slate-800 rounded-[3rem] shadow-xl hover:bg-slate-800 transition-all text-left"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-indigo-500 text-white flex items-center justify-center mb-6">
-            <Cpu className="w-7 h-7" />
-          </div>
-          <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tighter">AI ApexAgent</h3>
-          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-loose">
-            {isAr ? 'فحص ذكي متعدد الأنوية' : 'Multi-Core Neural Inspector'}
-          </p>
-        </motion.button>
-
-        {/* Small Action 1 */}
-        <motion.button
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          onClick={() => onNavigate('frp')}
-          className="md:col-span-4 md:row-span-1 group relative p-8 bg-white border border-slate-200 rounded-[3rem] shadow-sm hover:shadow-xl transition-all text-left"
-        >
-          <div className="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center mb-6">
-            <ShieldAlert className="w-7 h-7" />
-          </div>
-          <h3 className="text-xl font-black text-slate-900 mb-1">{isAr ? 'تخطي حساب جوجل' : 'FRP Bypass Hub'}</h3>
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Security Protocol</span>
-        </motion.button>
-
-        {/* Categories Refined */}
-        <div className="md:col-span-12 mt-12 space-y-12">
-          {categories.map((cat, catIdx) => (
-            <div key={catIdx} className="space-y-8">
-              <div className="flex items-center gap-6">
-                <h2 className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.6em] whitespace-nowrap">
-                  {isAr ? cat.nameAr : cat.nameEn}
-                </h2>
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {guidedWorkflows.map(wf => (
+            <div
+              key={wf.id}
+              onClick={() => onNavigate(wf.actionTab)}
+              className="p-5 bg-slate-900 hover:bg-slate-850 rounded-3xl border border-white/5 hover:border-indigo-500/40 transition-all cursor-pointer flex flex-col justify-between gap-4 group shadow-xl hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
+                  {wf.badge}
+                </span>
+                <ChevronRight size={16} className="text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
               </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {cat.tools.map((tool, toolIdx) => (
-                  <button
-                    key={toolIdx}
-                    onClick={() => onNavigate(tool.id)}
-                    className="p-8 bg-white border border-slate-200 rounded-[2.5rem] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] hover:border-indigo-200 transition-all group flex flex-col items-center text-center gap-5"
-                  >
-                    <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-all duration-500">
-                      <tool.icon className="w-7 h-7" />
-                    </div>
-                    <span className="text-[12px] font-black text-slate-600 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">
-                      {isAr ? tool.nameAr : tool.nameEn}
-                    </span>
-                  </button>
-                ))}
+
+              <div>
+                <h3 className="text-sm font-black text-white group-hover:text-indigo-300 transition-colors">
+                  {isAr ? wf.titleAr : wf.titleEn}
+                </h3>
+                <p className="text-[11px] text-slate-400 font-mono mt-1.5 leading-relaxed">
+                  {isAr ? wf.stepsAr : wf.stepsEn}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-bold text-indigo-400 pt-2 border-t border-white/5">
+                <span>{isAr ? 'فتح مسار الإصلاح الآن' : 'Launch Workflow'}</span>
+                <ArrowRight size={14} />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Ultra-Precision Footer HUD */}
-      <div className="bg-slate-900 border border-white/5 rounded-[4rem] p-12 flex flex-col lg:flex-row items-center justify-between gap-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
+      {/* 🔍 Search & Category Navigation Bar */}
+      <div className="flex flex-col gap-4 bg-slate-900/90 p-5 rounded-3xl border border-white/5 shadow-2xl backdrop-blur-xl">
         
-        <div className="flex items-center gap-10">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_40px_-10px_rgba(16,185,129,0.3)]">
-              <Activity className="w-10 h-10" />
-            </div>
-            <div>
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">{isAr ? 'كفاءة التشغيل' : 'GLOBAL UPTIME'}</span>
-              <div className="text-4xl font-black text-white tracking-tighter mt-1">99.998%</div>
-            </div>
+        {/* Search Input & Total Count */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="relative flex-1">
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isAr ? 'ابحث في كافة الأدوات (مثال: Knox, TrueTone, EDL, Thermal, Slicer, IMEI)...' : 'Search all tools by name, chip, protocol, or fault (e.g. Knox, TrueTone, EDL, BMS, Thermal)...'}
+              className="w-full pl-11 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:border-indigo-500 placeholder-slate-500"
+            />
           </div>
-          <div className="w-px h-16 bg-white/10 hidden lg:block" />
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <Database className="w-10 h-10" />
-            </div>
-            <div>
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em]">{isAr ? 'البيانات المعالجة' : 'REPAIRS SYNCED'}</span>
-              <div className="text-4xl font-black text-white tracking-tighter mt-1">14.2M+</div>
-            </div>
+
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-400 px-3 py-1.5 bg-slate-950 rounded-2xl border border-white/5 shrink-0">
+            <Boxes size={14} className="text-indigo-400" />
+            <span>{filteredTools.length} {isAr ? 'أداة متخصصة جاهزة' : 'Engineered Tools Available'}</span>
           </div>
         </div>
 
-        <div className="flex gap-4">
-           {[1,2,3,4,5,6].map(i => (
-             <div key={i} className={`w-3 h-12 rounded-full ${i <= 4 ? 'bg-indigo-500' : 'bg-slate-800'}`} />
-           ))}
+        {/* Category Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
+          {[
+            { id: 'ALL', labelAr: 'كافة الأدوات والمختبرات', labelEn: 'All 32 Tools' },
+            { id: 'AI_FAST', labelAr: '⚡ الذكاء والإصلاح السريع', labelEn: '⚡ AI & 1-Click Fast' },
+            { id: 'SOFTWARE_SECURITY', labelAr: '💻 السوفت وتخطي الحمايات', labelEn: '💻 Software & Security' },
+            { id: 'HARDWARE_BENCH', labelAr: '🔬 الهاردوير وطاولة الصيانة', labelEn: '🔬 Hardware & Bench' },
+            { id: 'NETWORK_RF', labelAr: '📡 الشبكة والفضاء والذواكر', labelEn: '📡 RF, Satellite & Memory' },
+            { id: 'SHOP_QA', labelAr: '📊 إدارة المحل وضمان الجودة', labelEn: '📊 Shop & QA Forensics' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedCategory(tab.id)}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                selectedCategory === tab.id 
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' 
+                  : 'bg-slate-950 text-slate-400 hover:text-white border border-white/5 hover:border-white/10'
+              }`}
+            >
+              {isAr ? tab.labelAr : tab.labelEn}
+            </button>
+          ))}
+        </div>
+
+      </div>
+
+      {/* 🎛️ Harmonious Grid of Tools */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {filteredTools.map(tool => {
+          const ToolIcon = tool.icon;
+
+          return (
+            <motion.div
+              key={tool.id}
+              layout
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => onNavigate(tool.id)}
+              className="p-6 bg-slate-900/95 hover:bg-slate-850 rounded-3xl border border-white/5 hover:border-indigo-500/40 shadow-xl transition-all cursor-pointer flex flex-col justify-between gap-5 group hover:-translate-y-1 relative overflow-hidden"
+            >
+              {/* Subtle Ambient Background Gradient Glow */}
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${tool.bgGlow} rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform`} />
+
+              {/* Card Header: Icon + Category Tag */}
+              <div className="flex items-center justify-between relative z-10">
+                <div className={`w-12 h-12 rounded-2xl bg-slate-950 border border-white/10 flex items-center justify-center ${tool.color} group-hover:scale-110 transition-transform shadow-lg`}>
+                  <ToolIcon size={22} />
+                </div>
+
+                <span className="px-2.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-white/5 text-slate-400 border border-white/5 rounded-full">
+                  {tool.tag}
+                </span>
+              </div>
+
+              {/* Card Body: Titles & Description */}
+              <div className="space-y-2 relative z-10">
+                <h3 className="text-sm font-black text-white group-hover:text-indigo-300 transition-colors">
+                  {isAr ? tool.nameAr : tool.nameEn}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans line-clamp-2">
+                  {isAr ? tool.descriptionAr : tool.descriptionEn}
+                </p>
+              </div>
+
+              {/* Card Footer: Category Label + Launch Arrow */}
+              <div className="flex items-center justify-between pt-3 border-t border-white/5 text-[10px] font-mono text-slate-500 relative z-10">
+                <span>{isAr ? tool.categoryLabelAr : tool.categoryLabelEn}</span>
+                <div className="flex items-center gap-1 text-slate-400 group-hover:text-indigo-400 font-bold transition-colors">
+                  <span>{isAr ? 'فتح' : 'OPEN'}</span>
+                  <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Empty Search Fallback */}
+      {filteredTools.length === 0 && (
+        <div className="p-12 bg-slate-900/60 rounded-3xl border border-white/5 flex flex-col items-center justify-center gap-3 text-center">
+          <Search size={36} className="text-slate-600" />
+          <h4 className="text-base font-bold text-slate-300">{isAr ? 'لم يتم العثور على أداة مطابقة' : 'No matching tools found'}</h4>
+          <p className="text-xs text-slate-500">{isAr ? 'يرجى تجربة كلمة بحث أخرى أو اختيار فئة مختلفة.' : 'Try changing your search query or reset the category filter.'}</p>
+          <button 
+            onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold mt-2"
+          >
+            {isAr ? 'عرض كافة الأدوات' : 'Show All Tools'}
+          </button>
+        </div>
+      )}
+
+      {/* 🌐 Real-time Operational Statistics Footer */}
+      <div className="p-6 bg-slate-900/80 rounded-3xl border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-white font-bold">ALL SERVICES OPERATIONAL</span>
+          </div>
+          <span className="text-slate-600">|</span>
+          <span>LATENCY: 4ms</span>
+          <span className="text-slate-600">|</span>
+          <span>SECURITY LEVEL: MAXIMUM</span>
+        </div>
+
+        <div className="text-slate-500 text-center sm:text-right">
+          OmniFix Pro Ultra Workstation v2026.4 • Master Repair & Engineering OS
         </div>
       </div>
+
     </div>
   );
 };

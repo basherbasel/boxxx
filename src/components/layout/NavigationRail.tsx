@@ -41,9 +41,9 @@ export function NavigationRail() {
         {categories.map((cat) => {
           const Icon = cat.icon;
           const isActive = activeTab === cat.id || activeTab === cat.targetTab ||
-            (cat.id === 'smart' && ['smart-1click', 'apex-agent', 'agent-encyclopedia', 'os-security-lab', 'os-architecture', 'dead-boot', 'frp', 'quantum-bypass', 'icloud', 'forensic-decrypt'].includes(activeTab)) ||
-            (cat.id === 'diagnostics' && ['ai-diagnostics', 'fault-repair', 'ai-oscilloscope', 'thermal-rosin'].includes(activeTab)) ||
-            (cat.id === 'advanced' && ['flasher', 'firmware-slicer', 'partition-slicer', 'network', 'ufs-memory', 'localization', 'safety', 'device-reader', 'pcb-explorer', 'power-lab', 'isp-hub', 'multimeter'].includes(activeTab)) ||
+            (cat.id === 'smart' && ['smart-1click', 'apex-agent', 'agent-encyclopedia', 'os-security-lab', 'os-architecture', 'dead-boot', 'frp', 'quantum-bypass', 'security-bypass', 'software-bypass', 'software-lab', 'icloud', 'forensic-decrypt'].includes(activeTab)) ||
+            (cat.id === 'diagnostics' && ['ai-diagnostics', 'fault-repair', 'ai-oscilloscope', 'thermal-rosin', 'thermal-lidar', 'ai-thermal-lidar', 'smart-bench', 'bench-controller'].includes(activeTab)) ||
+            (cat.id === 'advanced' && ['flasher', 'firmware-slicer', 'partition-slicer', 'network', 'satellite-ntn', 'esim-satellite', 'eeprom-programmer', 'truetone-bms', 'ufs-memory', 'localization', 'safety', 'device-reader', 'pcb-explorer', 'power-lab', 'isp-hub', 'multimeter'].includes(activeTab)) ||
             (cat.id === 'database' && ['oem-database', 'firmware-matching', 'hardware-workbench', 'box-emulation', 'codelab'].includes(activeTab)) ||
             (cat.id === 'business' && ['management', 'forensic-cert', 'qa-certificate'].includes(activeTab)) ||
             (cat.id === 'cloud-security' && ['cloud-security'].includes(activeTab));
