@@ -27,7 +27,7 @@ function getGenAI(): GoogleGenAI | null {
 
 // Multi-model robust fallback executor for extreme reliability
 async function generateAIContent(ai: GoogleGenAI, prompt: string, options: { responseMimeType?: string } = {}) {
-  const models = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-flash-latest'];
+  const models = ['gemini-3.8-flash', 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-3.1-pro-preview'];
   let lastError: any = null;
 
   for (const model of models) {

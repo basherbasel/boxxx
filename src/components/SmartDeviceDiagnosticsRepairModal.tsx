@@ -129,7 +129,7 @@ export const SmartDeviceDiagnosticsRepairModal: React.FC<SmartDeviceDiagnosticsR
         category: 'BATTERY',
         nameAr: 'صحة البطارية ومتحكم الشحن (BMS Health & Charging IC)',
         nameEn: 'Battery Health & BMS Circuit',
-        status: (device.batteryHealth === 'Overheat' ? 'CRITICAL' : device.batteryHealth === 'Fair' ? 'WARNING' : 'HEALTHY') as DiagnosticStatus,
+        status: (device.batteryHealth === 'Overheat' ? 'CRITICAL' : device.batteryHealth === 'Fair' ? 'WARNING' : 'HEALTHY') as 'HEALTHY' | 'WARNING' | 'CRITICAL' | 'CHECKING',
         value: `${device.batteryHealth || 'Good'} (${device.batteryLevel}% - ${device.batteryVoltageMv || 4200} mV)`,
         detailsAr: `فولتية البطارية مستقرة عند ${device.batteryVoltageMv || 4200}mV وحرارة الخلايا ${(device.batteryTempCelsius || 29.5).toFixed(1)}°C مع عدد دورات شحن ${device.batteryCycleCount || 20} دورة.`,
         detailsEn: `Battery voltage is stable at ${device.batteryVoltageMv || 4200}mV, temperature ${(device.batteryTempCelsius || 29.5).toFixed(1)}°C.`,
