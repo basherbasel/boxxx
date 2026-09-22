@@ -25,6 +25,8 @@ import { ConnectedDevice, ProtocolLogItem } from '../types';
 import { PROFESSIONAL_BOXES, ProfessionalBox } from '../data/professionalBoxes';
 import { realUsbService } from '../services/realUsbService';
 
+import { useWorkstation } from '../context/WorkstationContext';
+
 interface BoxEmulationHubProps {
   device: ConnectedDevice;
   onExecuteBoxProtocol: (boxName: string, protocolName: string, command: string) => void;
@@ -39,6 +41,7 @@ export const BoxEmulationHub: React.FC<BoxEmulationHubProps> = ({
   lang
 }) => {
   const isAr = lang === 'ar';
+  const { setActiveTab } = useWorkstation();
   const [selectedBox, setSelectedBox] = useState<ProfessionalBox>(PROFESSIONAL_BOXES[0]);
   const [selectedProtocolIndex, setSelectedProtocolIndex] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -86,9 +89,19 @@ export const BoxEmulationHub: React.FC<BoxEmulationHubProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-          <Usb className="w-3.5 h-3.5 text-emerald-400" />
-          <span>VIRTUAL SMARTCARD: <strong className="text-emerald-400">ACTIVE (0x92A8F3)</strong></span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setActiveTab('box-core-ai')}
+            className="flex items-center gap-1.5 text-xs font-bold text-cyan-300 bg-cyan-950/40 hover:bg-cyan-950/80 px-3 py-1.5 rounded-lg border border-cyan-800/40 transition-colors cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{isAr ? 'المحلل المعماري الذكي (Box Core AI)' : 'Smart AI Box Analyzer'}</span>
+          </button>
+
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+            <Usb className="w-3.5 h-3.5 text-emerald-400" />
+            <span>VIRTUAL SMARTCARD: <strong className="text-emerald-400">ACTIVE (0x92A8F3)</strong></span>
+          </div>
         </div>
       </div>
 

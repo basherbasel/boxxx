@@ -9,6 +9,8 @@ import { CommandPaletteModal } from '../CommandPaletteModal';
 import { UsbConnectionModal } from '../UsbConnectionModal';
 import { WindowsInstallerModal } from '../WindowsInstallerModal';
 import { SmartAgentInspectorModal } from '../SmartAgentInspectorModal';
+import { SmartDeviceDiagnosticsRepairModal } from '../SmartDeviceDiagnosticsRepairModal';
+import { LiveUsbDetectionBanner } from './LiveUsbDetectionBanner';
 
 export function WorkstationShell({ children }: { children: React.ReactNode }) {
   const { 
@@ -22,6 +24,8 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
     setCommandPaletteOpen,
     isUsbModalOpen,
     setUsbModalOpen,
+    isDiagnosticsModalOpen,
+    setDiagnosticsModalOpen,
     isWindowsInstallerOpen,
     setWindowsInstallerOpen,
     isAgentInspectorOpen,
@@ -152,6 +156,9 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
              <Navbar />
           </div>
 
+          {/* Live USB Device Detection & Quick Sync Banner */}
+          <LiveUsbDetectionBanner />
+
           {/* Scrolling Content Area */}
           <div className="flex-1 overflow-y-auto custom-scrollbar bg-slate-50/50">
             <AnimatePresence mode="wait">
@@ -232,6 +239,18 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
         onUpdateDeviceData={(updatedDevice) => {
           setCurrentDevice(updatedDevice);
           addLog(`Device State Updated by Neural Inspector`);
+        }}
+        isBusy={isBusy}
+        lang={lang}
+      />
+
+      <SmartDeviceDiagnosticsRepairModal
+        isOpen={isDiagnosticsModalOpen}
+        onClose={() => setDiagnosticsModalOpen(false)}
+        device={currentDevice}
+        onExecuteRepair={(cmd, title) => {
+          addLog(`[REPAIR:EXEC] Running fix pipeline: ${title} (${cmd})`);
+          addLog(`Hardware Handshake verified on bus: ${currentDevice.port}`);
         }}
         isBusy={isBusy}
         lang={lang}

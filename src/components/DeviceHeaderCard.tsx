@@ -26,6 +26,7 @@ interface DeviceHeaderCardProps {
   onRebootToMode: (mode: DeviceMode) => void;
   onReadInfo: () => void;
   onOpenSmartAgent?: () => void;
+  onOpenDiagnostics?: () => void;
   onTriggerDiagnostic?: (type: 'LOGCAT' | 'KERNEL' | 'MEMORY' | 'THERMAL') => void;
   lang: 'en' | 'ar';
 }
@@ -35,6 +36,7 @@ export const DeviceHeaderCard: React.FC<DeviceHeaderCardProps> = ({
   onRebootToMode,
   onReadInfo,
   onOpenSmartAgent,
+  onOpenDiagnostics,
   onTriggerDiagnostic,
   lang
 }) => {
@@ -146,7 +148,19 @@ export const DeviceHeaderCard: React.FC<DeviceHeaderCardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {onOpenDiagnostics && (
+              <motion.button
+                whileHover={{ scale: 1.05, translateY: -2, boxShadow: "0 10px 20px rgba(16,185,129,0.2)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onOpenDiagnostics}
+                className="px-4 py-2 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-lg transition-all cursor-pointer border border-emerald-400"
+              >
+                <Activity className="w-4 h-4 animate-pulse text-emerald-100" />
+                <span>{isAr ? '🩺 فحص وتشخيص وإصلاح الأعطال' : '🩺 Deep Diagnostic & Repair'}</span>
+              </motion.button>
+            )}
+
             <motion.button
               whileHover={{ scale: 1.05, translateY: -2 }}
               whileTap={{ scale: 0.95 }}

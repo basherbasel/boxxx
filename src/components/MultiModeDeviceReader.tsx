@@ -17,7 +17,9 @@ import {
   Sliders,
   AlertCircle,
   Copy,
-  Check
+  Check,
+  Activity,
+  Wrench
 } from 'lucide-react';
 import { ConnectedDevice, DeviceMode } from '../types';
 
@@ -26,6 +28,7 @@ interface MultiModeDeviceReaderProps {
   onSwitchDeviceMode: (newMode: DeviceMode) => void;
   onReadDeviceDeepInfo: (mode: DeviceMode) => void;
   onExecuteAdbCommand: (cmd: string) => void;
+  onOpenDiagnostics?: () => void;
   isBusy: boolean;
   lang: 'en' | 'ar';
 }
@@ -35,6 +38,7 @@ export const MultiModeDeviceReader: React.FC<MultiModeDeviceReaderProps> = ({
   onSwitchDeviceMode,
   onReadDeviceDeepInfo,
   onExecuteAdbCommand,
+  onOpenDiagnostics,
   isBusy,
   lang
 }) => {
@@ -225,12 +229,22 @@ export const MultiModeDeviceReader: React.FC<MultiModeDeviceReaderProps> = ({
           </div>
         </div>
 
-        {/* Read Action Button */}
-        <div className="flex items-center gap-2">
+        {/* Read & Diagnostic Action Buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {onOpenDiagnostics && (
+            <button
+              onClick={onOpenDiagnostics}
+              className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer ring-1 ring-emerald-400/40"
+            >
+              <Activity className="w-3.5 h-3.5 animate-pulse text-emerald-100" />
+              <span>{isAr ? '🩺 فحص وتشخيص الأعطال الشامل' : '🩺 FULL DIAGNOSTICS & REPAIR'}</span>
+            </button>
+          )}
+
           <button
             onClick={() => onReadDeviceDeepInfo(selectedReadMode)}
             disabled={isBusy}
-            className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-xs font-bold shadow-md shadow-cyan-600/20 transition-all"
+            className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-xs font-bold shadow-md shadow-cyan-600/20 transition-all cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isBusy ? 'animate-spin' : ''}`} />
             <span>{isAr ? 'قراءة شاملة للمعلومات الآن' : 'READ DEEP PARAMETERS NOW'}</span>

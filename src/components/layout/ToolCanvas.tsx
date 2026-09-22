@@ -40,6 +40,8 @@ import { SmartHardwareBenchController } from '../SmartHardwareBenchController';
 import { EepromTrueToneBmsStudio } from '../EepromTrueToneBmsStudio';
 import { SoftwareSecurityBypassLab } from '../SoftwareSecurityBypassLab';
 
+import { BoxCoreAIWorkspace } from '../BoxCoreAIWorkspace';
+
 export function ToolCanvas() {
   const { 
     activeTab, 
@@ -250,6 +252,14 @@ export function ToolCanvas() {
           onExecuteBoxProtocol={(boxName, protocolName, command) => 
             addLog(`Native Box Emulation [${boxName}] -> ${protocolName}: ${command}`)
           }
+        />
+      );
+
+    case 'box-core-ai':
+      return (
+        <BoxCoreAIWorkspace 
+          device={currentDevice} 
+          lang={lang} 
         />
       );
 

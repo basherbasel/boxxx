@@ -120,6 +120,32 @@ export const SoftwareSecurityBypassLab: React.FC<SoftwareSecurityBypassLabProps>
       features: ['1-Click Auth Disable', 'Scatter / DA Auto-Patch', 'Format / Wipe FRP in BROM', 'RPMB Read/Write']
     },
     {
+      id: 'samsung-payjoy-mdm-2026',
+      nameEn: 'Samsung PayJoy, Knox Cloud & Retail Mode Permanent Removal (2026)',
+      nameAr: 'حذف حظر الأقساط PayJoy وحسابات Knox Cloud ورتيل مود نهائياً 2026',
+      category: 'KNOX_MDM',
+      targetChip: 'Exynos 1480 / 2400 / Snapdragon 8 Gen 3/4',
+      securityLevel: 'Knox Guard 3.10 / PayJoy Locked',
+      timeSec: 3.5,
+      descriptionEn: 'Neutralizes PayJoy finance lock, Enterprise MDM policies, and Demo Retail Mode without tripping Knox or losing Samsung Wallet & Fingerprint.',
+      descriptionAr: 'تعطيل قفل أقساط PayJoy وحسابات الشركات والمصانع نهائياً بدون التسبب بخروج الجهاز من الضمان أو فقدان البصمة وخدمات سامسونج.',
+      commandSnippet: 'SAMSUNG_PAYJOY_KILLER --override-policy --unenroll-mdm --lock-status CLEAN',
+      features: ['PayJoy Finance Lock Neutralized', 'Samsung Wallet & Knox Intact', 'No WiFi / Cloud Re-Lock', 'Android 14/15/16 Ready']
+    },
+    {
+      id: 'imei-nvram-efs-rebuilder',
+      nameEn: 'NVRAM / EFS Dual-SIM IMEI Repair & Radio Calibration (Original restoration)',
+      nameAr: 'إصلاح السيريال الشبكي IMEI وصيانة قطاع EFS و NVRAM المفقود',
+      category: 'UNISOC_DIAG',
+      targetChip: 'Qualcomm / MediaTek / Exynos / Unisoc',
+      securityLevel: 'EFS Hardware Guard',
+      timeSec: 2.8,
+      descriptionEn: 'Restores corrupted or zeroed IMEI 1/2, recalibrates Baseband RF filters, and writes missing QCN/NVRAM calibration data.',
+      descriptionAr: 'استعادة وتصحيح السيريال الأصلي IMEI 1/2 للشبكة مع إعادة معايرة فلتر المودم وكتابة ملفات QCN/NVRAM التالفة.',
+      commandSnippet: 'RADIO_EFS_REBUILDER --port diag_modem --restore-nvram --recalibrate-rf',
+      features: ['Dual SIM IMEI Restoration', 'Fix Baseband Unknown', 'QCN / SEC_EFS Auto-Fix', 'Zero Signal Drop']
+    },
+    {
       id: 'apple-ios-ramdisk',
       nameEn: 'Apple iOS 18 Checkm8 DFU Ramdisk Baseband Activation',
       nameAr: 'تخطي شاشة التفعيل وآيكلود مع تشغيل الشبكة الكاملة iOS 18',

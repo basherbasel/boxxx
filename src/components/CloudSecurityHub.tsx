@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { safeFetchJson } from '../utils/apiHelper';
 import { 
   Globe, 
   Cloud, 
@@ -76,7 +77,7 @@ export const CloudSecurityHub: React.FC<CloudSecurityHubProps> = ({
     realUsbService.playContinuityBeep(120, 1900);
 
     try {
-      const response = await fetch('/api/ai/copilot-consult', {
+      const res = await safeFetchJson('/api/ai/copilot-consult', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -87,9 +88,8 @@ export const CloudSecurityHub: React.FC<CloudSecurityHubProps> = ({
         })
       });
 
-      const data = await response.json();
-      if (data.success && data.result) {
-        setAiAnalysisResult(data.result);
+      if (res.success && res.data?.result) {
+        setAiAnalysisResult(res.data.result);
         realUsbService.playContinuityBeep(250, 2600);
       }
     } catch (e) {

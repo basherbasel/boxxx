@@ -495,5 +495,120 @@ export const HARDWARE_REPAIR_GUIDES: HardwareRepairGuide[] = [
       thermalCameraCluesAr: 'مضخمات الطاقة (PA) تسخن بشدة عند محاولة إجراء مكالمة هاتفية إذا كانت متضررة داخلياً.',
       thermalCameraCluesEn: 'Damaged power amplifier (PA) modules exhibit immediate thermal runaways during cellular transmit bursts.'
     }
+  },
+  {
+    id: 'flagship-2026-pmic-diode-reference',
+    titleAr: 'قواعد بيانات ممانعة الملتيميتر لأجهزة الفلاج شيب 2026 (Samsung S26 / iPhone 16 Pro / Snapdragon 8 Gen 4-5 / A18-A19 Pro)',
+    titleEn: '2026 Flagship Multimeter Diode Mode Master Reference (Galaxy S26, iPhone 16/17 Pro, Snapdragon 8 Gen 4/5, A18/A19)',
+    category: 'POWER_PMIC',
+    symptomAr: 'شورت صريح أو تسريب بالمايكرو أمبير (Micro-Leakage) على خطوط المعالج وذاكرة UFS 4.0 و شريحة AI NPU.',
+    symptomEn: 'Full short circuit, micro-leakage current draw (15mA - 120mA) on CPU Cores, UFS 4.0 Storage, or AI Acceleration Cores.',
+    affectedComponents: ['Qualcomm PM8550 / PM8650 / PM8750', 'Apple PMU A18/A19 Pro', 'Samsung Exynos S2MU005 PMIC', 'MediaTek MT6368 PMIC', 'UFS 4.0 NAND Controller'],
+    boardModel: '2026 Ultra-High Density Multi-Layer Stacked Motherboard Architecture',
+    testPoints: [
+      {
+        id: 'tp-vdd-cpu-core-2026',
+        name: 'TP_VDD_CPU_SUPERCORE_0V8',
+        railName: 'VDD_CPU_PRIME_CORE',
+        location: 'Buck Coil L1001 near Main AP Processor / PM8750 PMIC',
+        diodeModeHealthy: '0.045V ~ 0.085V',
+        diodeModeToleranceMin: 0.035,
+        diodeModeToleranceMax: 0.120,
+        voltageWorking: '0.78V - 0.92V Dynamic Voltage Scaling (DVS)',
+        voltageStandby: '0.00V',
+        resistanceToGnd: '12 Ω ~ 28 Ω (Very Low Natural Resistance for Prime Cores)',
+        faultSymptomIfShort: '0.000V in diode mode -> Direct CPU silicon die junction breakdown. Board dead.',
+        faultSymptomIfOpen: 'Open Line -> Fractured BGA solder ball under CPU or blown PMIC inductor.',
+        diagramCoord: { x: 50, y: 40 }
+      },
+      {
+        id: 'tp-vdd-ufs4-1p8',
+        name: 'TP_VDD_UFS_4P0_1V8',
+        railName: 'VDD_UFS_LOGIC_1V8',
+        location: 'Capacitor C2005 adjacent to UFS 4.0 Storage BGA',
+        diodeModeHealthy: '0.380V ~ 0.440V',
+        diodeModeToleranceMin: 0.350,
+        diodeModeToleranceMax: 0.480,
+        voltageWorking: '1.80V Constant Power',
+        voltageStandby: '1.80V',
+        resistanceToGnd: '> 85 kΩ',
+        faultSymptomIfShort: 'Storage controller fails to initialize; device stuck in EDL/BROM mode or logo bootloop.',
+        faultSymptomIfOpen: 'Device reports "Storage Corrupted" or "UFS Device Read Error".',
+        diagramCoord: { x: 65, y: 55 }
+      },
+      {
+        id: 'tp-vcca-display-120hz',
+        name: 'TP_VCCA_OLED_AMOLED_4V6',
+        railName: 'VCCA_OLED_BIAS_4V6',
+        location: 'Filter Capacitor C5008 on OLED Display FPC Socket',
+        diodeModeHealthy: '0.520V ~ 0.580V',
+        diodeModeToleranceMin: 0.480,
+        diodeModeToleranceMax: 0.620,
+        voltageWorking: '4.60V High Efficiency OLED Bias Supply',
+        voltageStandby: '0.00V',
+        resistanceToGnd: '> 180 kΩ',
+        faultSymptomIfShort: 'Black screen, display flickers once then shuts down; phone still vibrates on boot.',
+        faultSymptomIfOpen: 'Complete black screen without touch response backlight.',
+        diagramCoord: { x: 35, y: 70 }
+      },
+      {
+        id: 'tp-vbus-pd3-20v',
+        name: 'TP_VBUS_PD3_FASTCHARGE_20V',
+        railName: 'VBUS_TYPE_C_PD3_IN',
+        location: 'Input Filter Mosfet Q4002 / Type-C Connector Line',
+        diodeModeHealthy: '0.540V ~ 0.610V',
+        diodeModeToleranceMin: 0.500,
+        diodeModeToleranceMax: 0.680,
+        voltageWorking: '5.0V / 9.0V / 15.0V / 20.0V PPS Fast Charging Input',
+        voltageStandby: '0.00V',
+        resistanceToGnd: '> 220 kΩ',
+        faultSymptomIfShort: 'Charger triggers overcurrent shutdown immediately upon insertion.',
+        faultSymptomIfOpen: 'Phone charges only at standard 5V 500mA slow USB speed.',
+        diagramCoord: { x: 20, y: 80 }
+      }
+    ],
+    boardChips: [
+      {
+        id: 'chip-pmic-flagship-2026',
+        designator: 'U1000',
+        partNumber: 'PM8750 / Apple PMU A19 Pro',
+        roleAr: 'معالج الطاقة الرئيسي لأجهزة الفلاج شيب وإدارة الفولتيات الدقيقة',
+        roleEn: 'Main Power Management IC & Precision Dynamic Buck Regulators',
+        category: 'POWER_PMIC',
+        x: 48,
+        y: 35,
+        width: 18,
+        height: 18,
+        color: '#6366f1',
+        pinCount: 220,
+        packageType: 'WLCSP-220',
+        commonDefects: ['Buck rail short circuit due to water ingress', 'Thermal degradation under high-power gaming/AI processing', 'Missing 1.8V PMIC EN signal']
+      }
+    ],
+    microSolderingSteps: [
+      {
+        stepNumber: 1,
+        titleAr: 'فصل وتثبيت الطبقات المزدوجة (Stacked Motherboard Interposer Split)',
+        titleEn: 'Double-Decker Stacked Motherboard Separation & Reballing Procedure',
+        hotAirTemp: '280°C - 310°C (Preheating Plate: 180°C)',
+        airFlow: '30%',
+        solderingIronTemp: '360°C',
+        solderPasteAlloy: 'Low-Melt Sn42/Bi58 (138°C) for Interposer or Medium-Melt Sn64/Bi35/Ag1 (158°C)',
+        stencilType: '2026 Precision Stacked Board Middle Layer Stencil',
+        procedureAr: 'استخدم منصة التسخين السفلي (Preheating Station) على درجة 180°C، ثم ارفع البوردة العلوية بحرص بدون الضغط على معالج النظام.',
+        procedureEn: 'Use lower preheater platform at 180°C; gently separate the upper RF logic board once interposer solder melts.',
+        safetyWarningAr: 'تجنب تحريك الشريحة السفلية أفقياً أثناء انصهار السولدر لتفادي تداخل كرات المعالج الرئيسية.',
+        safetyWarningEn: 'Never apply horizontal shear stress while interposer balls are molten to prevent CPU ball bridges.'
+      }
+    ],
+    shortIsolationGuide: {
+      safeCurrentInjectionVoltage: '0.80V on CPU Buck Rails / 1.80V on Logic Rails',
+      maxCurrentLimit: '3.00 Amperes',
+      rosinFluxMethodAr: 'بخر الراتنج بدقة فوق مكثفات التصفية المجاورة لآيسي الباور والمعالج، ثم احقن الفولت المباشر.',
+      rosinFluxMethodEn: 'Coat decoupling capacitor array around main PMIC with rosin; inject 0.8V into affected buck line.',
+      thermalCameraCluesAr: 'الكاميرا الحرارية ستكشف نقطة التبخر السريعة فور انبعاث الحرارة من المكثف التالف.',
+      thermalCameraCluesEn: 'Thermal imaging camera immediately highlights microscopic shorted MLCC capacitors.'
+    }
   }
 ];
+

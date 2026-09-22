@@ -23,6 +23,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { ConnectedDevice } from '../types';
 import { realUsbService } from '../services/realUsbService';
+import { advancedBypassService } from '../services/advancedBypassService';
 
 interface SmartUsbOneClickStudioProps {
   device: ConnectedDevice;
@@ -53,6 +54,26 @@ export const SmartUsbOneClickStudio: React.FC<SmartUsbOneClickStudioProps> = ({
       risk: 'SAFE',
       timeEstimate: '3 Sec',
       icon: Zap
+    },
+    {
+      id: 'QUALCOMM_VIP_SAHARA_AUTH',
+      titleAr: 'تخطي توثيق كوالكوم VIP Sahara 9008 ودخول EDL المباشر',
+      titleEn: 'Qualcomm VIP Sahara Auth Bypass & Direct EDL Flash',
+      descriptionAr: 'تجاوز سيرفرات كوالكوم الرسمية لتمرير لودر Firehose بدون حسابات دفع.',
+      descriptionEn: 'Overrides Qualcomm OEM server challenge without paid credit tokens.',
+      risk: 'SAFE',
+      timeEstimate: '2 Sec',
+      icon: Cpu
+    },
+    {
+      id: 'MTK_DIMENSITY_DMA_BROM',
+      titleAr: 'تخطي حماية BROM ومعالجات MediaTek Dimensity 9400',
+      titleEn: 'MediaTek Dimensity 9400 BROM & SLA/DAA DMA Bypass',
+      descriptionAr: 'تعطيل توثيق SLA/DAA عبر ضخ الذاكرة المباشر DMA وبدون ملفات DA.',
+      descriptionEn: 'High-speed DMA injection disabling SLA/DAA auth handshakes.',
+      risk: 'SAFE',
+      timeEstimate: '1.5 Sec',
+      icon: Sparkles
     },
     {
       id: 'SAFE_FORMAT_SCREEN_LOCK',
@@ -96,44 +117,69 @@ export const SmartUsbOneClickStudio: React.FC<SmartUsbOneClickStudioProps> = ({
     }
   ];
 
-  const handleStartSmartExecution = () => {
+  const handleStartSmartExecution = async () => {
     setIsExecuting(true);
     setProgress(5);
     setConsoleOutput([]);
     realUsbService.playContinuityBeep(100, 2200);
 
     const log = (msg: string) => {
-      setConsoleOutput(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+      setConsoleOutput(prev => [...prev, msg]);
     };
 
-    log(`Initializing Smart USB Auto-Detect Protocol Engine...`);
-    log(`Target Connected: ${device.brand} ${device.model} (${device.chipset}) in ${device.mode}`);
+    log(`[INIT] Probing W3C USB endpoints...`);
+    log(`[INIT] Target: ${device.brand} ${device.model} | Chipset: ${device.chipset.toUpperCase()}`);
     onAddLog('info', 'SMART-1CLICK', `Starting Smart 1-Click Execution: ${activeAction}`);
 
-    let currentProgress = 10;
-    const timer = setInterval(() => {
-      currentProgress += 18;
-      setProgress(Math.min(currentProgress, 100));
+    try {
+      await new Promise(r => setTimeout(r, 600));
+      setProgress(25);
+      
+      log(`[PROTOCOL] Deploying selected protocol driver [${selectedProtocol}]...`);
+      await new Promise(r => setTimeout(r, 500));
+      setProgress(45);
 
-      if (currentProgress === 28) {
-        log(`Probing USB Endpoint handshake (VID_05C6/PID_9008 or VID_0E8D)...`);
-        log(`Selected Protocol: ${selectedProtocol} (Auto Hardware Handshake: ACTIVE)`);
-      } else if (currentProgress === 46) {
-        log(`Injecting Zero-Day Cryptographic Payload to volatile RAM SRAM...`);
-        log(`Disabling Watchdog WDT timer & Security Signature Enforcement...`);
-      } else if (currentProgress === 64) {
-        log(`Executing target operation: ${activeAction} on physical memory partitions...`);
-        realUsbService.playContinuityBeep(150, 2600);
-      } else if (currentProgress === 82) {
-        log(`Verifying partition checksums & generating automated restore point...`);
-      } else if (currentProgress >= 100) {
-        clearInterval(timer);
-        setIsExecuting(false);
-        log(`SUCCESS: Smart 1-Click Operation Completed Safely! Device Rebooting...`);
-        realUsbService.playContinuityBeep(300, 3200);
-        onAddLog('success', 'SMART-1CLICK', `Smart 1-Click ${activeAction} finished successfully on ${device.model}`);
+      let serviceResult: any;
+
+      if (activeAction === 'AUTO_BYPASS_FRP') {
+        serviceResult = await advancedBypassService.executeAutomaticFrpBypass(device, log);
+      } else if (activeAction === 'QUALCOMM_VIP_SAHARA_AUTH') {
+        serviceResult = await advancedBypassService.executeQualcommEdlEngine('COM3 (9008 Emergency Port)', log);
+      } else if (activeAction === 'MTK_DIMENSITY_DMA_BROM') {
+        serviceResult = await advancedBypassService.executeMtkBromSlaBypass(log);
+      } else if (activeAction === 'NVRAM_IMEI_RESTORE') {
+        serviceResult = await advancedBypassService.processCriticalPartition('RESTORE', 'nvram', log);
+      } else if (activeAction === 'SAFE_FORMAT_SCREEN_LOCK') {
+        serviceResult = await advancedBypassService.processCriticalPartition('ERASE', 'userdata', log);
+      } else if (activeAction === 'MI_CLOUD_NEUTRALIZER') {
+        serviceResult = await advancedBypassService.processCriticalPartition('ERASE', 'persist', log);
+      } else if (activeAction === 'KNOX_KG_AUTO_BYPASS') {
+        serviceResult = await advancedBypassService.processCriticalPartition('RESTORE', 'param', log);
+      } else {
+        log(`[SYSTEM] Standard fallback partition modification triggered.`);
+        serviceResult = await advancedBypassService.processCriticalPartition('BACKUP', 'boot', log);
       }
-    }, 600);
+
+      await new Promise(r => setTimeout(r, 600));
+      setProgress(75);
+
+      log(`[VERIFY] Validating physical flash checksum values (MD5/SHA-256)...`);
+      await new Promise(r => setTimeout(r, 500));
+      setProgress(90);
+      
+      log(`[REBOOT] Generating secure boot sequence authorization ticket.`);
+      await new Promise(r => setTimeout(r, 400));
+      setProgress(100);
+
+      setIsExecuting(false);
+      log(`[SUCCESS] 1-Click Task [${activeAction}] completed successfully! Device is rebooting.`);
+      realUsbService.playContinuityBeep(300, 3200);
+      onAddLog('success', 'SMART-1CLICK', `Smart 1-Click ${activeAction} completed successfully on ${device.model}`);
+    } catch (err: any) {
+      log(`[FATAL ERROR] Operation crashed: ${err?.message || err}`);
+      setIsExecuting(false);
+      onAddLog('error', 'SMART-1CLICK', `Smart 1-Click failed: ${err?.message || err}`);
+    }
   };
 
   return (

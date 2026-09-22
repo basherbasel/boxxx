@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ConnectedDevice, DeviceMode } from '../types';
 import { DEVICE_PRESETS } from '../data/devicePresets';
+import { deviceKnowledgebaseService } from '../services/deviceKnowledgebaseService';
 
 interface WorkstationState {
   activeTab: string;
@@ -9,6 +10,7 @@ interface WorkstationState {
   lang: 'en' | 'ar';
   isCommandPaletteOpen: boolean;
   isUsbModalOpen: boolean;
+  isDiagnosticsModalOpen: boolean;
   isWindowsInstallerOpen: boolean;
   isAgentInspectorOpen: boolean;
   terminalLogs: string[];
@@ -23,6 +25,7 @@ interface WorkstationContextType extends WorkstationState {
   setLang: (lang: 'en' | 'ar') => void;
   setCommandPaletteOpen: (open: boolean) => void;
   setUsbModalOpen: (open: boolean) => void;
+  setDiagnosticsModalOpen: (open: boolean) => void;
   setWindowsInstallerOpen: (open: boolean) => void;
   setAgentInspectorOpen: (open: boolean) => void;
   addLog: (log: string) => void;
@@ -40,6 +43,7 @@ export function WorkstationProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<'en' | 'ar'>('ar');
   const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [isUsbModalOpen, setUsbModalOpen] = useState(false);
+  const [isDiagnosticsModalOpen, setDiagnosticsModalOpen] = useState(false);
   const [isWindowsInstallerOpen, setWindowsInstallerOpen] = useState(false);
   const [isAgentInspectorOpen, setAgentInspectorOpen] = useState(false);
   const [cloudStatus, setCloudStatus] = useState<'online' | 'syncing' | 'updated' | 'offline'>('online');
@@ -72,25 +76,100 @@ export function WorkstationProvider({ children }: { children: ReactNode }) {
     checkCloudUpdates();
   }, []);
 
-  const requestUsbConnection = async () => {
-    addLog('Initiating Hardware Discovery Protocol...');
-    try {
-      // In a real environment, navigator.usb would be used
-      // For the preview, we simulate the handshake
-      if ('usb' in navigator) {
-        addLog('WebUSB API Detected. Waiting for user permission...');
-        // const device = await (navigator as any).usb.requestDevice({ filters: [] });
-        setIsBusy(true);
-        setTimeout(() => {
-          addLog('Device Handshake Successful: VendorID 0x18D1 ProductID 0x4EE7');
-          addLog('Mode: FASTBOOT / ADB Interface Active');
-          setIsBusy(false);
-        }, 1500);
-      } else {
-        addLog('Error: WebUSB not supported in this browser. Please use Chrome/Edge.');
+  // Continuous Real-Time USB Hotplug Auto-Detection Daemon
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const probePairedUsbDevices = async () => {
+      if (typeof navigator === 'undefined' || !('usb' in navigator)) return;
+
+      try {
+        const pairedDevices = await (navigator as any).usb.getDevices();
+        if (pairedDevices && pairedDevices.length > 0 && isMounted) {
+          const rawDev = pairedDevices[0];
+          try {
+            await rawDev.open();
+            if (rawDev.configuration === null) {
+              try {
+                await rawDev.selectConfiguration(1);
+              } catch (e) {}
+            }
+          } catch (openErr) {
+            // May already be open
+          }
+
+          const vidHex = rawDev.vendorId.toString(16).padStart(4, '0').toUpperCase();
+          const pidHex = rawDev.productId.toString(16).padStart(4, '0').toUpperCase();
+          const mfg = rawDev.manufacturerName || 'Android Hardware';
+          const prod = rawDev.productName || 'Smart Terminal Target';
+          const actualSerial = rawDev.serialNumber?.trim() || `USB-${vidHex}-${pidHex}`;
+
+          const autoDevice = deviceKnowledgebaseService.identifyAndProfileHardware(
+            vidHex,
+            pidHex,
+            mfg,
+            prod,
+            actualSerial
+          );
+
+          setCurrentDevice(prev => {
+            if (prev.id !== autoDevice.id) {
+              addLog(`[AUTO-DETECT] ⚡ تم التعرف وتحديث الهاتف تلقائياً وحفظه في السجل: ${autoDevice.brand} ${autoDevice.marketName} (${autoDevice.mode})`);
+            }
+            return autoDevice;
+          });
+        }
+      } catch (err) {
+        // Silent background probe
       }
-    } catch (err) {
-      addLog(`Connection Failed: ${err}`);
+    };
+
+    // Initial probe
+    probePairedUsbDevices();
+
+    // Event listener for real-time USB hotplug connect
+    const onUsbConnect = (event: any) => {
+      addLog(`[USB-HOTPLUG] 🔌 تم توصيل جهاز USB جديد في المنفذ.`);
+      probePairedUsbDevices();
+    };
+
+    const onUsbDisconnect = (event: any) => {
+      addLog(`[USB-HOTPLUG] ⚠️ تم فصل جهاز USB من المنفذ.`);
+    };
+
+    if (typeof navigator !== 'undefined' && 'usb' in navigator) {
+      (navigator as any).usb.addEventListener('connect', onUsbConnect);
+      (navigator as any).usb.addEventListener('disconnect', onUsbDisconnect);
+    }
+
+    const interval = setInterval(probePairedUsbDevices, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      if (typeof navigator !== 'undefined' && 'usb' in navigator) {
+        (navigator as any).usb.removeEventListener('connect', onUsbConnect);
+        (navigator as any).usb.removeEventListener('disconnect', onUsbDisconnect);
+      }
+    };
+  }, []);
+
+  const requestUsbConnection = async () => {
+    addLog('Initiating Real WebUSB Hardware Discovery...');
+    setIsBusy(true);
+    try {
+      if (typeof navigator !== 'undefined' && 'usb' in navigator) {
+        const res = await (navigator as any).usb.requestDevice({ filters: [] });
+        if (res) {
+          addLog(`[WEBUSB:SUCCESS] Device linked: ${res.productName || 'USB Target'} (VID: 0x${res.vendorId.toString(16)})`);
+        }
+      } else {
+        addLog('WebUSB API not supported in this browser. Please use Chrome/Edge.');
+      }
+    } catch (err: any) {
+      addLog(`Connection note: ${err.message || 'Cancelled'}`);
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -102,6 +181,7 @@ export function WorkstationProvider({ children }: { children: ReactNode }) {
       lang, setLang,
       isCommandPaletteOpen, setCommandPaletteOpen,
       isUsbModalOpen, setUsbModalOpen,
+      isDiagnosticsModalOpen, setDiagnosticsModalOpen,
       isWindowsInstallerOpen, setWindowsInstallerOpen,
       isAgentInspectorOpen, setAgentInspectorOpen,
       terminalLogs, addLog, clearLogs,

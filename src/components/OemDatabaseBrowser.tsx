@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { OEM_DEVICE_DATABASE } from '../data/oemDeviceDatabase';
 import { OemDeviceRecord } from '../types';
+import { DeviceIngestionPipeline } from '../services/deviceIngestionPipeline';
 
 interface OemDatabaseBrowserProps {
   onSelectModelToTarget?: (record: OemDeviceRecord) => void;
@@ -53,7 +54,11 @@ export const OemDatabaseBrowser: React.FC<OemDatabaseBrowserProps> = ({
 
     const delayDebounce = setTimeout(() => {
       fetch(`/api/devices?brand=${selectedBrand}&search=${encodeURIComponent(searchQuery)}`)
-        .then((res) => {
+        .then(async (res) => {
+          const contentType = res.headers.get('content-type') || '';
+          if (!contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+          }
           if (!res.ok) throw new Error('Failed to fetch live database');
           return res.json();
         })
@@ -89,6 +94,10 @@ export const OemDatabaseBrowser: React.FC<OemDatabaseBrowserProps> = ({
       rec.supported_operations.some(op => op.toLowerCase().includes(q))
     );
   });
+
+  // Compute Data Ingestion Coverage Statistics
+  const normalizedRecords = OEM_DEVICE_DATABASE.map(rec => DeviceIngestionPipeline.ingestRecord(rec));
+  const coverageReport = DeviceIngestionPipeline.generateCoverageReport(normalizedRecords);
 
   const handleCopyFullJson = () => {
     const targetData = viewSource === 'live' ? liveManufacturers : filteredRecords;
@@ -189,6 +198,30 @@ export const OemDatabaseBrowser: React.FC<OemDatabaseBrowserProps> = ({
             {copiedJson ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
             <span>{copiedJson ? (isAr ? 'تم نسخ JSON!' : 'Copied!') : (isAr ? 'نسخ JSON' : 'Copy JSON')}</span>
           </button>
+        </div>
+      </div>
+
+      {/* Coverage & Data Quality Summary Panel */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80 text-xs font-mono">
+        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">{isAr ? 'الشركات المصنعة' : 'MANUFACTURERS'}</span>
+          <span className="text-base font-bold text-indigo-400">{coverageReport.totalManufacturers} {isAr ? 'شركات' : 'Brands'}</span>
+        </div>
+        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">{isAr ? 'الموديلات المسجلة' : 'REGISTERED MODELS'}</span>
+          <span className="text-base font-bold text-slate-200">{coverageReport.totalModelRecords} {isAr ? 'سجل' : 'Models'}</span>
+        </div>
+        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">{isAr ? 'درجة الموثوقية' : 'CONFIDENCE SCORE'}</span>
+          <span className="text-base font-bold text-emerald-400">{(coverageReport.averageConfidenceScore * 100).toFixed(1)}%</span>
+        </div>
+        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">{isAr ? 'التوثيق المعتمد' : 'VERIFIED SPECS'}</span>
+          <span className="text-base font-bold text-cyan-400">{coverageReport.verifiedCount} / {coverageReport.totalModelRecords}</span>
+        </div>
+        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-850 col-span-2 md:col-span-1">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">{isAr ? 'نسبة التغطية' : 'COVERAGE RATE'}</span>
+          <span className="text-base font-bold text-amber-400">{coverageReport.coveragePercentage}%</span>
         </div>
       </div>
 

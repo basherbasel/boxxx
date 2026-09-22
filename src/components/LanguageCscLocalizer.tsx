@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { safeFetchJson } from '../utils/apiHelper';
 import { 
   Globe, 
   Sparkles, 
@@ -61,7 +62,7 @@ export const LanguageCscLocalizer: React.FC<LanguageCscLocalizerProps> = ({
     setIsTranslating(true);
     setTranslatedXml('');
     try {
-      const response = await fetch('/api/ai/translate-strings', {
+      const res = await safeFetchJson('/api/ai/translate-strings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,9 +71,8 @@ export const LanguageCscLocalizer: React.FC<LanguageCscLocalizerProps> = ({
           targetLanguageCode: targetCode
         })
       });
-      const data = await response.json();
-      if (data.success && data.result?.translatedXml) {
-        setTranslatedXml(data.result.translatedXml);
+      if (res.success && res.data?.result?.translatedXml) {
+        setTranslatedXml(res.data.result.translatedXml);
       }
     } catch (e) {
       console.error(e);
