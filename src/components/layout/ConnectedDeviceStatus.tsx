@@ -1,6 +1,7 @@
 import React from 'react';
 import { Smartphone, Zap, ShieldCheck, Battery } from 'lucide-react';
 import { ConnectedDevice } from '../../types';
+import { useWorkstation } from '../../context/WorkstationContext';
 
 interface ConnectedDeviceStatusProps {
   device: ConnectedDevice;
@@ -10,6 +11,7 @@ interface ConnectedDeviceStatusProps {
 
 export function ConnectedDeviceStatus({ device, isBusy, lang }: ConnectedDeviceStatusProps) {
   const isAr = lang === 'ar';
+  const { setUsbModalOpen } = useWorkstation();
   
   const getModeColor = (mode: string) => {
     switch (mode) {
@@ -22,10 +24,16 @@ export function ConnectedDeviceStatus({ device, isBusy, lang }: ConnectedDeviceS
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div 
+      onClick={() => setUsbModalOpen(true)}
+      className="flex items-center gap-4 cursor-pointer hover:opacity-90 group transition-opacity"
+      title={isAr ? 'انقر لتغيير أو فحص الجهاز المتصل' : 'Click to inspect or change target device'}
+    >
       <div className="flex flex-col items-end">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-black text-white tracking-tight">{device.brand} {device.marketName}</span>
+          <span className="text-[11px] font-black text-white tracking-tight group-hover:text-indigo-300 transition-colors">
+            {device.brand} {device.marketName}
+          </span>
           <div className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${getModeColor(device.mode)}`}>
             {device.mode}
           </div>
@@ -42,8 +50,8 @@ export function ConnectedDeviceStatus({ device, isBusy, lang }: ConnectedDeviceS
         </div>
       </div>
       
-      <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 relative">
-        <Smartphone size={20} />
+      <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 relative group-hover:border-indigo-500 transition-colors">
+        <Smartphone size={20} className="group-hover:scale-110 transition-transform" />
         {isBusy && (
            <div className="absolute inset-0 rounded-xl border-2 border-indigo-500 animate-ping opacity-75" />
         )}

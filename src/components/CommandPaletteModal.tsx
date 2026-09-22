@@ -16,6 +16,10 @@ import {
   ArrowRight,
   HardDrive,
   LayoutDashboard,
+  Layers,
+  ShieldCheck,
+  Scissors,
+  Award,
   X
 } from 'lucide-react';
 import { useWorkstation } from '../context/WorkstationContext';
@@ -28,12 +32,14 @@ export const CommandPaletteModal: React.FC = () => {
     setActiveTab: onSelectTab,
     setCurrentDevice: onSelectDevice,
     isCommandPaletteOpen: isOpen,
-    setCommandPaletteOpen
+    setCommandPaletteOpen,
+    setUsbModalOpen,
+    setWindowsInstallerOpen
   } = useWorkstation();
 
   const onClose = () => setCommandPaletteOpen(false);
-  const onOpenUsbModal = () => {};
-  const onOpenWindowsInstaller = () => {};
+  const onOpenUsbModal = () => setUsbModalOpen(true);
+  const onOpenWindowsInstaller = () => setWindowsInstallerOpen(true);
 
   const isAr = lang === 'ar';
   const [query, setQuery] = useState('');
@@ -67,6 +73,36 @@ export const CommandPaletteModal: React.FC = () => {
       icon: LayoutDashboard,
       color: 'text-indigo-600',
       tabId: 'dashboard'
+    },
+    {
+      id: 'os-security-lab',
+      titleAr: 'مختبر بنية نظم التشغيل والحمايات وطرق إصلاحها (OS & Security Architecture Lab)',
+      titleEn: 'OS Architecture, Security Engines & Protection Repair Lab',
+      subtitleAr: 'تشريح كامل لـ BootROM, AVB 2.0, dm-verity, ARB, Knox, eFuses وطرق التخطي والإنعاش',
+      subtitleEn: 'Deep dive into BootROM, TrustZone, AVB 2.0, dm-verity, ARB & recovery pipelines',
+      icon: ShieldCheck,
+      color: 'text-emerald-400',
+      tabId: 'os-security-lab'
+    },
+    {
+      id: 'firmware-slicer',
+      titleAr: 'استوديو تقطيع الفلاشات واستخراج البارتشنات الفوري (Firmware Slicer & Kernel Lab)',
+      titleEn: 'Universal Firmware Partition Slicer & Kernel Patcher',
+      subtitleAr: 'استخراج boot.img, init_boot, vbmeta فورياً من فلاشات 10GB بدون تحميل كامل مع ترقيع Magisk/KernelSU',
+      subtitleEn: 'Carve target partitions in seconds without full 10GB downloads + Magisk & AVB patching',
+      icon: Scissors,
+      color: 'text-cyan-400',
+      tabId: 'firmware-slicer'
+    },
+    {
+      id: 'forensic-cert',
+      titleAr: 'استوديو الفحص الجنائي وشهادات الجودة المعتمدة (Forensic QA Certificate Studio)',
+      titleEn: 'Forensic Inspection & Lab QA Certificate Studio',
+      subtitleAr: 'فحص معايير الجودة الـ 14 وطباعة وتصدير شهادات مخبرية معتمدة برمز QR وتوقيع رسمي',
+      subtitleEn: '14-point pre/post repair inspection checklist & printable lab certificates with QR tracking',
+      icon: Award,
+      color: 'text-amber-400',
+      tabId: 'forensic-cert'
     },
     {
       id: 'smart-1click',
@@ -167,6 +203,86 @@ export const CommandPaletteModal: React.FC = () => {
       icon: Database,
       color: 'text-emerald-400',
       tabId: 'oem-database'
+    },
+    {
+      id: 'flasher',
+      titleAr: 'تفليش الرومات والأنظمة (Multi-ROM Flasher Studio)',
+      titleEn: 'Multi-ROM Flasher Studio',
+      subtitleAr: 'تفليش Odin, Fastboot, MTK SP Flash, EDL Sahara لجميع الأجهزة',
+      subtitleEn: 'Flash Odin, Fastboot, MTK Scatter, EDL XML firmwares',
+      icon: Zap,
+      color: 'text-cyan-500',
+      tabId: 'flasher'
+    },
+    {
+      id: 'network',
+      titleAr: 'إصلاح الشبكة والسيريال (NVRAM & IMEI Studio)',
+      titleEn: 'NVRAM & IMEI Studio',
+      subtitleAr: 'إعادة بناء QCN, NVRAM, وكتابة السيريال وموديم Qualcomm/MTK',
+      subtitleEn: 'QCN/NVRAM calibration, baseband repair & dual-SIM IMEI patch',
+      icon: Activity,
+      color: 'text-blue-500',
+      tabId: 'network'
+    },
+    {
+      id: 'agent-encyclopedia',
+      titleAr: 'موسوعة خبرات الوكيل الذكي واللغات (Skills Encyclopedia)',
+      titleEn: 'Agent Skills Encyclopedia',
+      subtitleAr: '17 وحدة هندسية شاملة للهاردوير والسوفتوير والبروتوكولات والأكواد',
+      subtitleEn: '17 deep engineering dossiers across hardware, software & protocols',
+      icon: Cpu,
+      color: 'text-violet-500',
+      tabId: 'agent-encyclopedia'
+    },
+    {
+      id: 'box-emulation',
+      titleAr: 'محاكي البوكسات والدونجلات المباشرة (Native Box Emulation)',
+      titleEn: 'Native Box & Dongle Tools',
+      subtitleAr: 'محاكاة بروتوكولات Z3X, Octoplus, Chimera, UFI, Pandora, Medusa Pro',
+      subtitleEn: 'Native virtual engine for Z3X, Octoplus, Chimera & Pandora boxes',
+      icon: Wrench,
+      color: 'text-emerald-500',
+      tabId: 'box-emulation'
+    },
+    {
+      id: 'codelab',
+      titleAr: 'مختبر أكواد ومكتبات البروتوكول (Native Protocol Code Lab)',
+      titleEn: 'Native Protocol Code Lab',
+      subtitleAr: 'أكواد جاهزة بلغات C++, Python, Rust لبروتوكولات USB و BROM',
+      subtitleEn: 'Production-ready protocol drivers in C++, Python, Rust & TypeScript',
+      icon: Terminal,
+      color: 'text-amber-500',
+      tabId: 'codelab'
+    },
+    {
+      id: 'localization',
+      titleAr: 'التعريب وتغيير منطقة CSC (Language & CSC Switcher)',
+      titleEn: 'Language & CSC Switcher',
+      subtitleAr: 'تغيير كود الدولة ومطابقة CSC وتفعيل تسجيل المكالمات تلقائياً',
+      subtitleEn: 'CSC region modification, call recording activation & XML localization',
+      icon: Globe,
+      color: 'text-indigo-400',
+      tabId: 'localization'
+    },
+    {
+      id: 'safety',
+      titleAr: 'حماية مضاد الطوب والنسخ الاحتياطي (Anti-Brick Suite)',
+      titleEn: 'Anti-Brick & Partition Suite',
+      subtitleAr: 'أخذ نسخ احتياطية فورية لقطاعات NVRAM, EFS, VBMETA, Persist الحساسة',
+      subtitleEn: 'Automated safeguard backups for critical EFS, persist & radio partitions',
+      icon: ShieldAlert,
+      color: 'text-rose-500',
+      tabId: 'safety'
+    },
+    {
+      id: 'device-reader',
+      titleAr: 'قارئ التيليميتري بكافة الأوضاع (Multi-Mode Telemetry)',
+      titleEn: 'Multi-Mode Telemetry Reader',
+      subtitleAr: 'قراءة بيانات الهاتف في ADB, Fastboot, EDL, DFU, BROM ومطابقة الحماية',
+      subtitleEn: 'Comprehensive device inspection across ADB, Fastboot, EDL 9008 & BROM',
+      icon: Smartphone,
+      color: 'text-teal-400',
+      tabId: 'device-reader'
     }
   ];
 

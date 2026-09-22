@@ -24,7 +24,8 @@ import {
   Info,
   Sparkles,
   CircuitBoard,
-  CpuIcon
+  CpuIcon,
+  BookOpen
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ConnectedDevice } from '../types';
@@ -137,6 +138,17 @@ export const ApexAgentDashboard: React.FC<ApexAgentDashboardProps> = ({ device, 
           </div>
 
           <div className="flex items-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onNavigate('agent-encyclopedia')}
+              className="px-6 py-4 rounded-[1.5rem] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all shadow-sm group"
+            >
+              <BookOpen className="w-5 h-5 text-indigo-600 group-hover:scale-110 transition-transform" />
+              <span>{isAr ? 'موسوعة الخبرات واللغات' : 'Skills & OS Encyclopedia'}</span>
+              <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[9px] font-mono">4 DOMAINS</span>
+            </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.1, rotate: 180, backgroundColor: "rgba(248,250,252,0.8)" }}
               whileTap={{ scale: 0.9 }}

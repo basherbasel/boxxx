@@ -26,7 +26,8 @@ import {
   Users,
   Briefcase,
   Home,
-  ChevronRight
+  ChevronRight,
+  BookOpen
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'motion/react';
 import { useWorkstation } from '../context/WorkstationContext';
@@ -45,6 +46,7 @@ export const Navbar: React.FC = () => {
   const navTabs = [
     { id: 'dashboard', category: 'smart', labelEn: 'Central Command Dashboard', labelAr: 'لوحة التحكم المركزية', icon: Home, badge: 'CORE' },
     { id: 'apex-agent', category: 'smart', labelEn: 'ApexAgent AI Multi-Core', labelAr: 'الوكيل الذكي ApexAgent', icon: Cpu, badge: 'PRO v2.0' },
+    { id: 'agent-encyclopedia', category: 'smart', labelEn: 'Agent Skills Encyclopedia', labelAr: 'موسوعة خبرات الوكيل الذكي', icon: BookOpen, badge: '4 DOMAINS' },
     { id: 'smart-1click', category: 'smart', labelEn: 'Smart 1-Click Studio', labelAr: 'الاستوديو الذكي للضغط الواحدة', icon: Sparkles, badge: 'AUTO 2026' },
     { id: 'dead-boot', category: 'smart', labelEn: 'Dead Boot Recovery', labelAr: 'إحياء الهواتف الميتة', icon: RotateCcw, badge: 'UNBRICK' },
     { id: 'quantum-bypass', category: 'smart', labelEn: 'Quantum Ultra Bypass', labelAr: 'التخطي السريع والفك الفائق', icon: Zap, badge: 'ULTRA 0.4ms' },

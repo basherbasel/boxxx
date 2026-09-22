@@ -14,40 +14,44 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useWorkstation } from '../../context/WorkstationContext';
 
 export function NavigationRail() {
-  const { lang, activeTab, setActiveTab, requestUsbConnection, isBusy } = useWorkstation();
+  const { 
+    lang, 
+    activeTab, 
+    setActiveTab, 
+    requestUsbConnection, 
+    isBusy, 
+    setUsbModalOpen,
+    setWindowsInstallerOpen 
+  } = useWorkstation();
   const isAr = lang === 'ar';
 
   const categories = [
-    { id: 'dashboard', labelEn: 'Dashboard', labelAr: 'الرئيسية', icon: LayoutDashboard },
-    { id: 'cloud-security', labelEn: 'Cloud Intel', labelAr: 'ذكاء السحابة', icon: Globe },
-    { id: 'smart', labelEn: '1-Click', labelAr: 'نقرة واحدة', icon: Sparkles },
-    { id: 'diagnostics', labelEn: 'AI Logic', labelAr: 'منطق الذكاء', icon: Activity },
-    { id: 'advanced', labelEn: 'Pro Tools', labelAr: 'أدوات برو', icon: Cpu },
-    { id: 'database', labelEn: 'Resources', labelAr: 'المصادر', icon: Database },
-    { id: 'business', labelEn: 'Business', labelAr: 'الأعمال', icon: Briefcase },
+    { id: 'dashboard', targetTab: 'dashboard', labelEn: 'Dashboard', labelAr: 'الرئيسية', icon: LayoutDashboard },
+    { id: 'cloud-security', targetTab: 'cloud-security', labelEn: 'Cloud Intel', labelAr: 'ذكاء السحابة', icon: Globe },
+    { id: 'smart', targetTab: 'smart-1click', labelEn: '1-Click', labelAr: 'نقرة واحدة', icon: Sparkles },
+    { id: 'diagnostics', targetTab: 'ai-diagnostics', labelEn: 'AI Logic', labelAr: 'منطق الذكاء', icon: Activity },
+    { id: 'advanced', targetTab: 'flasher', labelEn: 'Pro Tools', labelAr: 'أدوات برو', icon: Cpu },
+    { id: 'database', targetTab: 'oem-database', labelEn: 'Resources', labelAr: 'المصادر', icon: Database },
+    { id: 'business', targetTab: 'management', labelEn: 'Business', labelAr: 'الأعمال', icon: Briefcase },
   ];
-
-  // Helper to determine active category based on activeTab
-  // In a more complex app, we'd store selectedCategory in Context
-  // For now, we'll infer it or use the context's tab logic
 
   return (
     <aside className="w-16 lg:w-20 bg-slate-900 border-r border-white/5 flex flex-col items-center py-6 gap-6 z-50 shrink-0">
       <div className="flex flex-col gap-4 w-full px-2">
         {categories.map((cat) => {
           const Icon = cat.icon;
-          // Simple logic to highlight the category
-          const isActive = activeTab === cat.id || 
-            (cat.id === 'smart' && ['smart-1click', 'apex-agent', 'dead-boot', 'frp'].includes(activeTab)) ||
+          const isActive = activeTab === cat.id || activeTab === cat.targetTab ||
+            (cat.id === 'smart' && ['smart-1click', 'apex-agent', 'agent-encyclopedia', 'os-security-lab', 'os-architecture', 'dead-boot', 'frp', 'quantum-bypass', 'icloud', 'forensic-decrypt'].includes(activeTab)) ||
             (cat.id === 'diagnostics' && ['ai-diagnostics', 'fault-repair', 'ai-oscilloscope', 'thermal-rosin'].includes(activeTab)) ||
-            (cat.id === 'advanced' && ['flasher', 'network', 'ufs-memory', 'pcb-explorer', 'power-lab'].includes(activeTab)) ||
-            (cat.id === 'database' && ['oem-database', 'firmware-matching', 'isp-hub'].includes(activeTab)) ||
-            (cat.id === 'business' && activeTab === 'management');
+            (cat.id === 'advanced' && ['flasher', 'firmware-slicer', 'partition-slicer', 'network', 'ufs-memory', 'localization', 'safety', 'device-reader', 'pcb-explorer', 'power-lab', 'isp-hub', 'multimeter'].includes(activeTab)) ||
+            (cat.id === 'database' && ['oem-database', 'firmware-matching', 'hardware-workbench', 'box-emulation', 'codelab'].includes(activeTab)) ||
+            (cat.id === 'business' && ['management', 'forensic-cert', 'qa-certificate'].includes(activeTab)) ||
+            (cat.id === 'cloud-security' && ['cloud-security'].includes(activeTab));
 
           return (
             <button
               key={cat.id}
-              onClick={() => setActiveTab(cat.id)}
+              onClick={() => setActiveTab(cat.targetTab)}
               className="relative group flex flex-col items-center gap-1 py-3 w-full rounded-2xl transition-all"
             >
               {isActive && (
@@ -74,7 +78,10 @@ export function NavigationRail() {
 
       <div className="mt-auto flex flex-col gap-4 w-full px-2">
         <button 
-          onClick={requestUsbConnection}
+          onClick={() => {
+            setUsbModalOpen(true);
+            requestUsbConnection();
+          }}
           disabled={isBusy}
           className={`relative group flex flex-col items-center gap-1 py-3 w-full rounded-2xl transition-all ${isBusy ? 'animate-pulse' : ''}`}
         >
@@ -84,12 +91,18 @@ export function NavigationRail() {
           <span className="text-[7px] font-black uppercase tracking-tighter text-slate-500">USB CONNECT</span>
           
           <div className={`absolute ${isAr ? 'right-full mr-4' : 'left-full ml-4'} px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap z-[100] shadow-xl border border-white/10`}>
-            {isAr ? 'بدء اتصال USB حقيقي' : 'Initiate Real USB Handshake'}
+            {isAr ? 'فحص وربط منفذ USB حقيقي' : 'Initiate Real USB Handshake & Selector'}
           </div>
         </button>
 
-        <button className="p-3 text-slate-500 hover:text-white transition-colors flex justify-center">
+        <button 
+          onClick={() => setWindowsInstallerOpen(true)}
+          className="relative group p-3 text-slate-500 hover:text-white transition-colors flex justify-center"
+        >
           <Settings size={20} />
+          <div className={`absolute ${isAr ? 'right-full mr-4' : 'left-full ml-4'} px-3 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all whitespace-nowrap z-[100] shadow-xl border border-white/5`}>
+            {isAr ? 'تعريفات ويندوز وإعدادات النظام' : 'Windows Drivers & Setup'}
+          </div>
         </button>
       </div>
     </aside>

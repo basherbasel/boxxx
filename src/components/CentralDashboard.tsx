@@ -16,7 +16,12 @@ import {
   RotateCcw,
   Terminal,
   Search,
-  ArrowRight
+  ArrowRight,
+  BookOpen,
+  Layers,
+  ShieldCheck,
+  Scissors,
+  Award
 } from 'lucide-react';
 
 interface CentralDashboardProps {
@@ -29,6 +34,7 @@ export const CentralDashboard: React.FC<CentralDashboardProps> = ({ onNavigate, 
 
   const quickActions = [
     { id: 'apex-agent', titleEn: 'AI ApexAgent', titleAr: 'الوكيل الذكي', icon: Cpu, color: 'bg-indigo-500', descEn: 'Autonomous multi-core AI repair assistant.', descAr: 'مساعد إصلاح ذكي متعدد الأنوية.' },
+    { id: 'agent-encyclopedia', titleEn: 'Skills Encyclopedia', titleAr: 'موسوعة خبرات الوكيل', icon: BookOpen, color: 'bg-violet-600', descEn: 'Software, Hardware, Low-Level & OS Knowledge.', descAr: 'علوم السوفت وير والهارد وير ولغات البرمجة والأنظمة.' },
     { id: 'smart-1click', titleEn: '1-Click Studio', titleAr: 'استوديو النقرة الواحدة', icon: Sparkles, color: 'bg-emerald-500', descEn: 'Automated unbrick and bypass procedures.', descAr: 'إجراءات الإحياء والتخطي الآلية.' },
     { id: 'fault-repair', titleEn: 'Universal Faults', titleAr: 'إصلاح كافة الأعطال', icon: Wrench, color: 'bg-amber-500', descEn: 'Library of thousands of repair protocols.', descAr: 'مكتبة تضم آلاف بروتوكولات الإصلاح.' },
     { id: 'frp', titleEn: 'FRP Bypass Hub', titleAr: 'تخطي حساب جوجل', icon: ShieldAlert, color: 'bg-rose-500', descEn: 'Advanced account and security removal.', descAr: 'إزالة الحسابات والحماية المتقدمة.' },
@@ -50,6 +56,7 @@ export const CentralDashboard: React.FC<CentralDashboardProps> = ({ onNavigate, 
       nameAr: 'البرمجة والشبكة',
       tools: [
         { id: 'flasher', nameEn: 'Multi-Flasher', nameAr: 'التفليش المتعدد', icon: Zap },
+        { id: 'firmware-slicer', nameEn: 'Firmware Slicer', nameAr: 'تقطيع الفلاشات الفوري', icon: Scissors },
         { id: 'network', nameEn: 'IMEI/NVRAM', nameAr: 'الشبكة والسيريال', icon: Globe },
         { id: 'ufs-memory', nameEn: 'UFS/eMMC', nameAr: 'برمجة الذاكرة', icon: HardDrive },
         { id: 'quantum-bypass', nameEn: 'Quantum Bypass', nameAr: 'التخطي الفائق', icon: Zap },
@@ -61,7 +68,9 @@ export const CentralDashboard: React.FC<CentralDashboardProps> = ({ onNavigate, 
       tools: [
         { id: 'oem-database', nameEn: 'OEM JSON DB', nameAr: 'قاعدة الموديلات', icon: Database },
         { id: 'firmware-matching', nameEn: 'Firmware Hub', nameAr: 'مركز الفلاشات', icon: ShieldAlert },
+        { id: 'forensic-cert', nameEn: 'QA Lab Certificate', nameAr: 'شهادات الفحص وضمان الجودة', icon: Award },
         { id: 'hardware-workbench', nameEn: 'Workbench', nameAr: 'بيئة الهاردوير', icon: Cpu },
+        { id: 'os-security-lab', nameEn: 'OS & Security Lab', nameAr: 'مختبر نظم التشغيل والحماية', icon: Layers },
         { id: 'codelab', nameEn: 'Protocol Lab', nameAr: 'مختبر الأكواد', icon: Terminal },
       ]
     }
@@ -117,6 +126,20 @@ export const CentralDashboard: React.FC<CentralDashboardProps> = ({ onNavigate, 
                 <Cpu className="w-4 h-4" />
                 {isAr ? 'بدء فحص المنظومة' : 'INITIALIZE SYSTEM SCAN'}
                 <ArrowRight className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => onNavigate('os-security-lab')}
+                className="px-8 py-5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(99,102,241,0.4)] hover:-translate-y-1 transition-all backdrop-blur-xl flex items-center gap-3"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-300" />
+                {isAr ? 'مختبر الحمايات ونظم التشغيل' : 'OS & SECURITY LAB'}
+              </button>
+              <button 
+                onClick={() => onNavigate('agent-encyclopedia')}
+                className="px-8 py-5 bg-white/10 hover:bg-white/15 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest border border-white/20 transition-all backdrop-blur-xl flex items-center gap-3"
+              >
+                <BookOpen className="w-4 h-4 text-indigo-400" />
+                {isAr ? 'موسوعة خبرات الوكيل واللغات' : 'SKILLS & OS ENCYCLOPEDIA'}
               </button>
               <button className="px-10 py-5 bg-white/5 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest border border-white/10 hover:bg-white/10 transition-all backdrop-blur-xl">
                 {isAr ? 'إحصائيات الشبكة' : 'NETWORK TELEMETRY'}

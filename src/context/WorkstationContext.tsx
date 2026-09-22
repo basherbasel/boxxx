@@ -8,6 +8,9 @@ interface WorkstationState {
   isBusy: boolean;
   lang: 'en' | 'ar';
   isCommandPaletteOpen: boolean;
+  isUsbModalOpen: boolean;
+  isWindowsInstallerOpen: boolean;
+  isAgentInspectorOpen: boolean;
   terminalLogs: string[];
   cloudStatus: 'online' | 'syncing' | 'updated' | 'offline';
   lastUpdate: string;
@@ -19,6 +22,9 @@ interface WorkstationContextType extends WorkstationState {
   setIsBusy: (busy: boolean) => void;
   setLang: (lang: 'en' | 'ar') => void;
   setCommandPaletteOpen: (open: boolean) => void;
+  setUsbModalOpen: (open: boolean) => void;
+  setWindowsInstallerOpen: (open: boolean) => void;
+  setAgentInspectorOpen: (open: boolean) => void;
   addLog: (log: string) => void;
   clearLogs: () => void;
   requestUsbConnection: () => Promise<void>;
@@ -33,6 +39,9 @@ export function WorkstationProvider({ children }: { children: ReactNode }) {
   const [isBusy, setIsBusy] = useState(false);
   const [lang, setLang] = useState<'en' | 'ar'>('ar');
   const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [isUsbModalOpen, setUsbModalOpen] = useState(false);
+  const [isWindowsInstallerOpen, setWindowsInstallerOpen] = useState(false);
+  const [isAgentInspectorOpen, setAgentInspectorOpen] = useState(false);
   const [cloudStatus, setCloudStatus] = useState<'online' | 'syncing' | 'updated' | 'offline'>('online');
   const [lastUpdate, setLastUpdate] = useState<string>(new Date().toLocaleDateString());
   const [terminalLogs, setTerminalLogs] = useState<string[]>(['[SYSTEM] OmniFix Pro Ultra Engine Initialized...', '[CLOUD] Connection to Neural-Hub Established.']);
@@ -92,6 +101,9 @@ export function WorkstationProvider({ children }: { children: ReactNode }) {
       isBusy, setIsBusy,
       lang, setLang,
       isCommandPaletteOpen, setCommandPaletteOpen,
+      isUsbModalOpen, setUsbModalOpen,
+      isWindowsInstallerOpen, setWindowsInstallerOpen,
+      isAgentInspectorOpen, setAgentInspectorOpen,
       terminalLogs, addLog, clearLogs,
       requestUsbConnection,
       cloudStatus, lastUpdate, checkCloudUpdates

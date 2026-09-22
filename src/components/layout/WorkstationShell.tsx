@@ -4,8 +4,11 @@ import { useWorkstation } from '../../context/WorkstationContext';
 import { Navbar } from '../Navbar';
 import { NavigationRail } from './NavigationRail';
 import { ConnectedDeviceStatus } from './ConnectedDeviceStatus';
-import { Terminal, Activity, Zap, ShieldCheck, Search, Bell, Globe, Power, RefreshCw } from 'lucide-react';
+import { Terminal, Activity, Zap, ShieldCheck, Search, Bell, Globe, Power, RefreshCw, Cpu } from 'lucide-react';
 import { CommandPaletteModal } from '../CommandPaletteModal';
+import { UsbConnectionModal } from '../UsbConnectionModal';
+import { WindowsInstallerModal } from '../WindowsInstallerModal';
+import { SmartAgentInspectorModal } from '../SmartAgentInspectorModal';
 
 export function WorkstationShell({ children }: { children: React.ReactNode }) {
   const { 
@@ -13,13 +16,21 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
     activeTab, 
     setActiveTab,
     currentDevice, 
+    setCurrentDevice,
     isBusy, 
     isCommandPaletteOpen, 
     setCommandPaletteOpen,
+    isUsbModalOpen,
+    setUsbModalOpen,
+    isWindowsInstallerOpen,
+    setWindowsInstallerOpen,
+    isAgentInspectorOpen,
+    setAgentInspectorOpen,
     setLang,
     cloudStatus,
     checkCloudUpdates,
-    terminalLogs 
+    terminalLogs,
+    addLog
   } = useWorkstation();
 
   const isAr = lang === 'ar';
@@ -84,6 +95,24 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
           <div className="h-10 w-px bg-white/10" />
           
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setAgentInspectorOpen(true)}
+              className="hidden md:flex items-center gap-2 px-3 py-2 text-[10px] bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-xl text-indigo-300 font-bold transition-all"
+              title={isAr ? 'فاحص الوكيل العصبي الذكي' : 'Neural Agent Inspector'}
+            >
+              <Cpu className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="uppercase tracking-wider">{isAr ? 'الوكيل الذكي' : 'AI INSPECTOR'}</span>
+            </button>
+
+            <button
+              onClick={() => setWindowsInstallerOpen(true)}
+              className="hidden lg:flex items-center gap-2 px-3 py-2 text-[10px] bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-slate-300 font-bold transition-all"
+              title={isAr ? 'تعريفات ويندوز والملحقات' : 'Windows Drivers & Setup'}
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <span className="uppercase tracking-wider">{isAr ? 'التعريفات' : 'DRIVERS'}</span>
+            </button>
+
             <button
               onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
               className="flex items-center gap-2.5 px-4 py-2 text-[11px] bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-slate-300 font-black transition-all group"
@@ -170,6 +199,43 @@ export function WorkstationShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <CommandPaletteModal />
+
+      <UsbConnectionModal 
+        isOpen={isUsbModalOpen}
+        onClose={() => setUsbModalOpen(false)}
+        currentDevice={currentDevice}
+        onConnectRealDevice={(deviceData, usbInfo) => {
+          setCurrentDevice(deviceData);
+          addLog(`Real WebUSB Hardware Attached: ${usbInfo.productName || 'USB Interface'} (VID:${usbInfo.vendorIdHex} PID:${usbInfo.productIdHex})`);
+        }}
+        onSelectPresetDevice={(preset) => {
+          setCurrentDevice(preset);
+          addLog(`Device Preset Selected: ${preset.brand} ${preset.marketName} [${preset.mode}]`);
+        }}
+        lang={lang}
+      />
+
+      <WindowsInstallerModal 
+        isOpen={isWindowsInstallerOpen}
+        onClose={() => setWindowsInstallerOpen(false)}
+        lang={lang}
+      />
+
+      <SmartAgentInspectorModal 
+        isOpen={isAgentInspectorOpen}
+        onClose={() => setAgentInspectorOpen(false)}
+        device={currentDevice}
+        onApplyAutoRepairPlan={(planName, commands, repairType) => {
+          addLog(`Executing Auto-Repair Plan: ${planName} [${repairType}]`);
+          commands.forEach(cmd => addLog(`CMD >> ${cmd}`));
+        }}
+        onUpdateDeviceData={(updatedDevice) => {
+          setCurrentDevice(updatedDevice);
+          addLog(`Device State Updated by Neural Inspector`);
+        }}
+        isBusy={isBusy}
+        lang={lang}
+      />
     </div>
   );
 }

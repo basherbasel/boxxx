@@ -1,5 +1,6 @@
 import React from 'react';
 import { useWorkstation } from '../../context/WorkstationContext';
+import { ChipsetType } from '../../types';
 import { CentralDashboard } from '../CentralDashboard';
 import { ApexAgentDashboard } from '../ApexAgentDashboard';
 import { AiDiagnosticEngine } from '../AiDiagnosticEngine';
@@ -24,12 +25,22 @@ import { QuickWizardGuide } from '../QuickWizardGuide';
 import { ForensicDecryptSuite } from '../ForensicDecryptSuite';
 import { ManagementStudio } from '../ManagementStudio';
 import { CloudSecurityHub } from '../tools/CloudSecurityHub';
+import { AgentSkillsEncyclopedia } from '../AgentSkillsEncyclopedia';
+import { LanguageCscLocalizer } from '../LanguageCscLocalizer';
+import { AntiBrickSafetySuite } from '../AntiBrickSafetySuite';
+import { MultiModeDeviceReader } from '../MultiModeDeviceReader';
+import { BoxEmulationHub } from '../BoxEmulationHub';
+import { ProtocolCodeLab } from '../ProtocolCodeLab';
+import { OsSecurityArchitectureLab } from '../OsSecurityArchitectureLab';
+import { FirmwarePartitionSlicer } from '../FirmwarePartitionSlicer';
+import { ForensicCertificationStudio } from '../ForensicCertificationStudio';
 
 export function ToolCanvas() {
   const { 
     activeTab, 
     lang, 
     currentDevice, 
+    setCurrentDevice,
     isBusy, 
     setIsBusy, 
     setActiveTab, 
@@ -37,14 +48,51 @@ export function ToolCanvas() {
   } = useWorkstation();
 
   const handleApplyFix = (fix: any) => {
-    addLog(`Applying Fix: ${fix}`);
+    addLog(`Applying Fix: ${typeof fix === 'string' ? fix : JSON.stringify(fix)}`);
   };
 
   switch (activeTab) {
     case 'dashboard':
       return <CentralDashboard lang={lang} onNavigate={setActiveTab} />;
+
     case 'apex-agent':
       return <ApexAgentDashboard device={currentDevice} onNavigate={setActiveTab} lang={lang} />;
+
+    case 'agent-encyclopedia':
+      return <AgentSkillsEncyclopedia lang={lang} onNavigateToTool={setActiveTab} />;
+
+    case 'smart':
+    case 'smart-1click':
+      return <SmartUsbOneClickStudio device={currentDevice} lang={lang} onAddLog={addLog} />;
+
+    case 'dead-boot':
+      return <DeadBootRecoveryStudio device={currentDevice} lang={lang} onAddLog={addLog} />;
+
+    case 'quantum-bypass':
+    case 'icloud':
+      return (
+        <QuantumBypassEngine 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy}
+          onExecuteQuantumBypass={(m) => addLog(`Executing Quantum Bypass: ${m}`)}
+        />
+      );
+
+    case 'frp':
+      return (
+        <FrpBypassHub 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy} 
+          onExecuteBypass={(m) => addLog(`Executing FRP Bypass: ${m.name}`)} 
+        />
+      );
+
+    case 'forensic-decrypt':
+      return <ForensicDecryptSuite lang={lang} device={currentDevice} onAddLog={addLog} isBusy={isBusy} />;
+
+    case 'diagnostics':
     case 'ai-diagnostics':
       return (
         <AiDiagnosticEngine 
@@ -55,19 +103,7 @@ export function ToolCanvas() {
           onNavigateToHardwareRepair={(id) => setActiveTab('pcb-explorer')}
         />
       );
-    case 'smart-1click':
-      return <SmartUsbOneClickStudio device={currentDevice} lang={lang} onAddLog={addLog} />;
-    case 'flasher':
-      return (
-        <FlasherWorkspace 
-          device={currentDevice} 
-          lang={lang} 
-          isBusy={isBusy}
-          onExecuteFlash={(p) => addLog(`Executing Flash Protocol: ${p}`)}
-        />
-      );
-    case 'dead-boot':
-      return <DeadBootRecoveryStudio device={currentDevice} lang={lang} onAddLog={addLog} />;
+
     case 'fault-repair':
       return (
         <UltimateFaultRepairHub 
@@ -77,26 +113,24 @@ export function ToolCanvas() {
           onExecuteRepairPipeline={(p) => addLog(`Executing Repair Pipeline: ${p.id}`)}
         />
       );
-    case 'frp':
+
+    case 'ai-oscilloscope':
+      return <AiOscilloscopeStudio lang={lang} device={currentDevice} />;
+
+    case 'thermal-rosin':
+      return <ThermalRosinCameraStudio lang={lang} device={currentDevice} />;
+
+    case 'advanced':
+    case 'flasher':
       return (
-        <FrpBypassHub 
-          device={currentDevice} 
-          lang={lang} 
-          isBusy={isBusy} 
-          onExecuteBypass={(m) => addLog(`Executing FRP Bypass: ${m.name}`)} 
-        />
-      );
-    case 'icloud':
-      return (
-        <QuantumBypassEngine 
+        <FlasherWorkspace 
           device={currentDevice} 
           lang={lang} 
           isBusy={isBusy}
-          onExecuteQuantumBypass={(m) => addLog(`Executing Quantum Bypass: ${m}`)}
+          onExecuteFlash={(p) => addLog(`Executing Flash Protocol: ${p}`)}
         />
       );
-    case 'hardware-workbench':
-      return <HardwareMicroSolderingEngine device={currentDevice} lang={lang} />;
+
     case 'network':
       return (
         <NetworkNvramStudio 
@@ -106,38 +140,159 @@ export function ToolCanvas() {
           onExecuteNvramAction={(a) => addLog(`Executing NVRAM Action: ${a}`)}
         />
       );
+
     case 'ufs-memory':
       return <UfsMemoryProgrammerStudio device={currentDevice} lang={lang} />;
-    case 'ai-oscilloscope':
-      return <AiOscilloscopeStudio lang={lang} device={currentDevice} />;
-    case 'thermal-rosin':
-      return <ThermalRosinCameraStudio lang={lang} device={currentDevice} />;
+
+    case 'localization':
+      return (
+        <LanguageCscLocalizer 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy}
+          onExecuteLocalize={(actionType, payload) => addLog(`Localization executed: ${actionType}`)}
+        />
+      );
+
+    case 'safety':
+      return (
+        <AntiBrickSafetySuite 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy}
+          onBackupPartition={(partitions) => addLog(`Partition Backup executed: ${partitions.join(', ')}`)}
+          onRestorePartition={(partitionName) => addLog(`Partition Restore executed: ${partitionName}`)}
+        />
+      );
+
+    case 'device-reader':
+      return (
+        <MultiModeDeviceReader 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy}
+          onSwitchDeviceMode={(newMode) => {
+            setCurrentDevice({ ...currentDevice, mode: newMode });
+            addLog(`Device Mode switched to: ${newMode}`);
+          }}
+          onReadDeviceDeepInfo={(mode) => addLog(`Reading deep telemetry for mode: ${mode}`)}
+          onExecuteAdbCommand={(cmd) => addLog(`Executing Shell Command: ${cmd}`)}
+        />
+      );
+
+    case 'hardware-workbench':
+      return <HardwareMicroSolderingEngine device={currentDevice} lang={lang} />;
+
     case 'pcb-explorer':
       return <InteractivePcbBitmapExplorer lang={lang} device={currentDevice} />;
+
     case 'power-lab':
       return <PowerSignatureLab lang={lang} />;
+
     case 'isp-hub':
       return <IspTestPointHub lang={lang} />;
+
     case 'multimeter':
       return <MultimeterStudio lang={lang} />;
+
+    case 'database':
     case 'oem-database':
-      return <OemDatabaseBrowser lang={lang} />;
+      return (
+        <OemDatabaseBrowser 
+          lang={lang} 
+          onSelectModelToTarget={(record) => {
+            const chipLower = (record.chipset || '').toLowerCase();
+            let validChipset: ChipsetType = 'generic_adb';
+            if (chipLower.includes('snapdragon') || chipLower.includes('qualcomm')) validChipset = 'qualcomm';
+            else if (chipLower.includes('dimensity') || chipLower.includes('helio') || chipLower.includes('mtk')) validChipset = 'mediatek';
+            else if (chipLower.includes('exynos')) validChipset = 'samsung_exynos';
+            else if (chipLower.includes('unisoc') || chipLower.includes('spd')) validChipset = 'unisoc_spd';
+            else if (chipLower.includes('kirin')) validChipset = 'hisilicon_kirin';
+            else if (chipLower.includes('bionic') || chipLower.includes('apple')) validChipset = 'apple_ios';
+            else if (chipLower.includes('tensor')) validChipset = 'google_tensor';
+
+            setCurrentDevice({
+              ...currentDevice,
+              model: record.model,
+              marketName: `${record.brand} ${record.model}`,
+              brand: record.brand,
+              chipset: validChipset,
+              chipsetName: record.chipset || currentDevice.chipsetName
+            });
+            addLog(`Selected target device from OEM registry: ${record.brand} ${record.model}`);
+          }}
+        />
+      );
+
     case 'firmware-matching':
       return (
         <FirmwareMatchingService 
           lang={lang} 
           device={currentDevice} 
-          onSelectFirmwareForFlash={(f) => addLog(`Selected Firmware: ${f.osVersion}`)}
+          onSelectFirmwareForFlash={(f) => {
+            setActiveTab('flasher');
+            addLog(`Firmware routed to Multi-ROM Flasher: ${f.osVersion} (${f.regionCsc || f.model})`);
+          }}
         />
       );
+
+    case 'box-emulation':
+      return (
+        <BoxEmulationHub 
+          device={currentDevice} 
+          lang={lang} 
+          isBusy={isBusy}
+          onExecuteBoxProtocol={(boxName, protocolName, command) => 
+            addLog(`Native Box Emulation [${boxName}] -> ${protocolName}: ${command}`)
+          }
+        />
+      );
+
+    case 'codelab':
+      return <ProtocolCodeLab lang={lang} />;
+
+    case 'os-security-lab':
+    case 'os-architecture':
+      return (
+        <OsSecurityArchitectureLab 
+          lang={lang} 
+          device={currentDevice}
+          onNavigateToTool={setActiveTab}
+          onAddLog={addLog}
+        />
+      );
+
+    case 'firmware-slicer':
+    case 'partition-slicer':
+      return (
+        <FirmwarePartitionSlicer
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+          onNavigateToTool={setActiveTab}
+        />
+      );
+
+    case 'forensic-cert':
+    case 'qa-certificate':
+      return (
+        <ForensicCertificationStudio
+          lang={lang}
+          device={currentDevice}
+          onAddLog={addLog}
+        />
+      );
+
     case 'quick-wizard':
       return <QuickWizardGuide lang={lang} setActiveTab={setActiveTab} />;
-    case 'forensic-decrypt':
-      return <ForensicDecryptSuite lang={lang} device={currentDevice} onAddLog={addLog} isBusy={isBusy} />;
+
+    case 'business':
     case 'management':
       return <ManagementStudio lang={lang} />;
+
     case 'cloud-security':
       return <CloudSecurityHub />;
+
     default:
       return <CentralDashboard lang={lang} onNavigate={setActiveTab} />;
   }
