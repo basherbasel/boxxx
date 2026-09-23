@@ -965,18 +965,30 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // ---------------- VITE & STATIC SERVING ----------------
 
 async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
+  const distPath = path.join(process.cwd(), 'dist');
+  const hasDist = fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'));
+
+  if (process.env.NODE_ENV === 'production' && hasDist) {
+    console.log('[OmniFix Pro Core] Serving static production build from dist/');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
+  } else {
+    console.log('[OmniFix Pro Core] dist/index.html not found or in development mode. Mounting Vite middleware/fallback...');
+    try {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } catch (err) {
+      console.error('[OmniFix Pro Core] Failed to load Vite middleware, falling back to root index.html serving:', err);
+      app.use(express.static(process.cwd()));
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(process.cwd(), 'index.html'));
+      });
+    }
   }
 
   app.listen(PORT, '0.0.0.0', () => {
